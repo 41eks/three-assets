@@ -18,11 +18,18 @@ camera.position.set(0, 0.5, 3);
 export const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
+const pmrem = new THREE.PMREMGenerator(renderer);
 // 加载一次 HDR
 new HDRLoader().load('studio.hdr', (hdr) => {
-    hdr.mapping = THREE.EquirectangularReflectionMapping;
-    scene.environment = hdr;
-    scene.background = hdr;
+    const envMap = pmrem.fromEquirectangular(hdr).texture;
+
+    scene.environment = envMap;
+
+    scene.background = envMap;
+
+    hdr.dispose();
+
+    pmrem.dispose();
 });
 
 // 全局动画循环

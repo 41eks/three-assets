@@ -11,6 +11,7 @@ export const routeConfig = [
     { hash: '#/blueberry', label: '蓝莓', page: () => import('./pages/blueberry.js') },
     { hash: '#/glass', label: '玻璃', page: () => import('./pages/glass.js') },
     { hash: '#/tart', label: '蛋挞', page: () => import('./pages/tart.js') },
+    { hash: '#/momo', label: '桃子', page: () => import('./pages/momo.js') },
 ];
 export async function registerRoutes() {
     for (const { hash, page } of routeConfig) {
