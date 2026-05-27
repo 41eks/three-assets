@@ -1,17 +1,23 @@
 
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { scene, camera, controls, renderer } from '../core/scene.js';
-
+import {
+    setLoadingState, setLoadingPercent
+} from '../core/ui.js';
 import * as THREE from 'three';  // ← 加这行
 let loaded = false; // ✅ 缓存标记，同一模型只加载一次
 let root = null; // 记住根节点
 export function enter() {
     camera.position.set(0, 0.5, 3);
     controls.target.set(0, 0, 0);
-    showLoading(true);
+    // showLoading(true);
+    // if (root)
+
     if (root) {
         scene.add(root); // 已加载过，直接加回来
         return;
+    } else {
+        setLoadingState(true);
     }
     // 1. 记录当前页面的 hash
     const initHash = window.location.hash;
@@ -22,10 +28,12 @@ export function enter() {
     const addModel = () => {
         if (window.location.hash === initHash) {
             scene.add(root);
-            showLoading(false);
+            // showLoading(false);
+            setLoadingState(false);
         } else {
             console.log('页面已切换，模型仅缓存不上屏');
-            showLoading(false);
+            // showLoading(false);
+            setLoadingState(false);
         }
     };
     new GLTFLoader().load(
@@ -58,11 +66,13 @@ export function enter() {
         (xhr) => {
             // 加载进度
             const percent = Math.round((xhr.loaded / xhr.total) * 100);
-            document.getElementById('loading-text').textContent = `加载中 ${percent}%`;
+            // document.getElementById('loading-text').textContent = `加载中 ${percent}%`;
+            setLoadingPercent(percent);
         },
         (err) => {
             console.error('模型加载失败', err);
-            showLoading(false);
+            // showLoading(false);
+            setLoadingState(false);
         }
     );
 
@@ -74,8 +84,6 @@ import { HDRLoader } from 'three/examples/jsm/loaders/HDRLoader.js';
 export function leave() {
     if (root) scene.remove(root); // 只移出场景，不销毁，下次还能用
     loaded = false;
+    setLoadingState(false);
 }
 
-function showLoading(show) {
-    document.getElementById('loading').style.display = show ? 'flex' : 'none';
-}

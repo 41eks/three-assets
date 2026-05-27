@@ -1,7 +1,7 @@
 
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { scene, camera, controls, renderer } from '../core/scene.js';
-
+import { setLoadingState, setLoadingPercent } from '../core/ui.js';
 import * as THREE from 'three';  // ← 加这行
 let loaded = false; // ✅ 缓存标记，同一模型只加载一次
 let root = null; // 记住根节点
@@ -24,11 +24,13 @@ export function enter() {
         }
     };
 
-    showLoading(true);
+    // showLoading(true);
 
     if (root) {
         scene.add(root); // 已加载过，直接加回来
         return;
+    } else {
+        setLoadingState(true);
     }
 
     new GLTFLoader().load(
@@ -71,7 +73,8 @@ export function enter() {
         (xhr) => {
             // 加载进度
             const percent = Math.round((xhr.loaded / xhr.total) * 100);
-            document.getElementById('loading-text').textContent = `加载中 ${percent}%`;
+            // document.getElementById('loading-text').textContent = `加载中 ${percent}%`;
+            setLoadingPercent(percent);
         },
         (err) => {
             console.error('模型加载失败', err);
