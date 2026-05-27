@@ -7,6 +7,19 @@ import * as homePage from './pages/home.js';  // 静态 import，和 main.js 一
 
 // 先注册 home 并启动
 addRoute('#/', homePage);
-startRouter();  // ← home.enter() 立即执行，无黑屏
-await registerRoutes();
-startRouter();
+// 2. 判断当前 hash 是不是 home
+const currentHash = location.hash || '#/';
+
+if (currentHash === '#/' || currentHash === '') {
+    // 首屏就是 home，立即启动，后台加载其余路由
+    startRouter();
+    registerRoutes();
+} else {
+    // 首屏是其他页面，等那个页面的路由注册完再启动
+    await registerRoutes();
+    startRouter();
+}
+
+
+// registerRoutes();
+// startRouter();

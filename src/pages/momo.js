@@ -1,6 +1,6 @@
 
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { scene, camera, controls,renderer } from '../core/scene.js';
+import { scene, camera, controls, renderer } from '../core/scene.js';
 
 import * as THREE from 'three';  // ← 加这行
 let loaded = false; // ✅ 缓存标记，同一模型只加载一次
@@ -8,7 +8,21 @@ let root = null; // 记住根节点
 export function enter() {
     camera.position.set(0, 0.5, 3);
     controls.target.set(0, 0, 0);
+    // 1. 记录当前页面的 hash
+    const initHash = window.location.hash;
 
+    // --- 【新增】封装好的工具函数 ---
+
+    // 工具 1：校验页面并上屏
+    const addModel = () => {
+        if (window.location.hash === initHash) {
+            scene.add(root);
+            showLoading(false);
+        } else {
+            console.log('页面已切换，模型仅缓存不上屏');
+            showLoading(false);
+        }
+    };
 
     showLoading(true);
 
@@ -50,8 +64,9 @@ export function enter() {
                     }
                 }
             });
-            scene.add(root);
-            showLoading(false);
+            addModel();
+            // scene.add(root);
+            // showLoading(false);
         },
         (xhr) => {
             // 加载进度

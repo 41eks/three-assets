@@ -8,15 +8,26 @@ let root = null; // 记住根节点
 export function enter() {
     camera.position.set(0, 0.5, 3);
     controls.target.set(0, 0, 0);
-
-
     showLoading(true);
-
     if (root) {
         scene.add(root); // 已加载过，直接加回来
         return;
     }
+    // 1. 记录当前页面的 hash
+    const initHash = window.location.hash;
 
+    // --- 【新增】封装好的工具函数 ---
+
+    // 工具 1：校验页面并上屏
+    const addModel = () => {
+        if (window.location.hash === initHash) {
+            scene.add(root);
+            showLoading(false);
+        } else {
+            console.log('页面已切换，模型仅缓存不上屏');
+            showLoading(false);
+        }
+    };
     new GLTFLoader().load(
         'pudding.glb',
         (gltf) => {
@@ -28,8 +39,6 @@ export function enter() {
 
                     if (mat.name.includes('GLASS')) {
                         obj.material = new THREE.MeshPhysicalMaterial({
-
-
                             map: mat.map,       // 继承你的渐变贴图
                             color: mat.color,
                             roughness: 0,
@@ -42,8 +51,9 @@ export function enter() {
                 }
             });
             root.scale.set(0.4, 0.4, 0.4);
-            scene.add(root);
-            showLoading(false);
+            // showLoading(false);
+            // ✅ 2. 核心：处理完材质后，直接调用封装的函数
+            addModel();
         },
         (xhr) => {
             // 加载进度
@@ -55,6 +65,7 @@ export function enter() {
             showLoading(false);
         }
     );
+
 }
 
 import { HDRLoader } from 'three/examples/jsm/loaders/HDRLoader.js';

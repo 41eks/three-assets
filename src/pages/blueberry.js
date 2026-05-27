@@ -1,7 +1,10 @@
 
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { scene, camera, controls } from '../core/scene.js';
+import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 
+const loader = new GLTFLoader();
+loader.setMeshoptDecoder(MeshoptDecoder);
 let loaded = false; // ✅ 缓存标记，同一模型只加载一次
 let root = null; // 记住根节点
 export function enter() {
@@ -16,8 +19,8 @@ export function enter() {
         return;
     }
 
-    new GLTFLoader().load(
-        'blueberry/蓝莓.glb',
+    loader.load(
+        'blueberry/蓝莓.optimized.glb',
         (gltf) => {
             root = gltf.scene; // 保存根节点
             scene.add(root);
