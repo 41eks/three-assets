@@ -16,11 +16,11 @@ const loadingPercentState = createState(0);
 createEffect(() => {
 
   loading.style.display = loadingState.get();
-  loading.innerHTML = `<span id="loading-text">加载中${loadingPercentState.get()}</span>`;
+  loading.innerHTML = `<span id="loading-text">加载中 ${loadingPercentState.get()}%</span>`;
 
 });
 document.body.appendChild(loading);
-export function setLoadingState(state) {
+export function setLoadingState(state: boolean): void {
   if (state === true) {
     loadingPercentState.set(0); // ← 每次显示时重置进度
     loadingState.set('flex');
@@ -29,16 +29,10 @@ export function setLoadingState(state) {
     loadingState.set('none');
   }
 }
-export function setLoadingPercent(p) {
+export function setLoadingPercent(p: number): void {
   loadingPercentState.set(p);
 }
-// function showLoading(show) {
-//   document.getElementById('loading').style.display = show ? 'flex' : 'none';
-// }
 
-
-
-// core/ui.js 里添加
 
 const backBtn = document.createElement('a');
 backBtn.href = '#/';

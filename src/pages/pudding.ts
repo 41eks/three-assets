@@ -7,6 +7,9 @@ import {
 import * as THREE from 'three';  // ← 加这行
 let loaded = false; // ✅ 缓存标记，同一模型只加载一次
 let root = null; // 记住根节点
+
+
+
 export function enter() {
     camera.position.set(0, 0.5, 3);
     controls.target.set(0, 0, 0);

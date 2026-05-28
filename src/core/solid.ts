@@ -1,26 +1,26 @@
 let activeEffect = null;
 
-export function createEffect(effectFn) {
+export function createEffect(effectFn: () => void) {
     activeEffect = effectFn;
     effectFn();
     activeEffect = null;
 }
 
 // 优化 1：直接接收初始值，简化 API
-export function createState(initialValue) {
+export function createState<T>(initialValue: T) {
     let _state = initialValue;
-    const subscribers = new Set();
+    const subscribers: Set<Function> = new Set();
 
-    function setState(newValue) {
+    function setState(newValue: T) {
         if (_state === newValue) return; // 优化：值没变就不触发更新
         _state = newValue;
-        
+
         const prevEffect = activeEffect;
-        activeEffect = null;            
+        activeEffect = null;
         // 复制一份 subscribers，防止在遍历过程中添加新订阅导致死循环
         const currentSubscribers = new Set(subscribers);
         currentSubscribers.forEach(effectFn => effectFn());
-        activeEffect = prevEffect;      
+        activeEffect = prevEffect;
     }
 
     function getState() {
@@ -29,6 +29,6 @@ export function createState(initialValue) {
         }
         return _state;
     }
-    
+
     return { get: getState, set: setState };
 }

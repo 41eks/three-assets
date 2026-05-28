@@ -1,7 +1,7 @@
 
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { scene, camera, controls } from '../core/scene.js';
-
+import { setLoadingState, setLoadingPercent } from '../core/ui.js';
 let loaded = false; // ✅ 缓存标记，同一模型只加载一次
 let root = null; // 记住根节点
 export function enter() {
@@ -9,11 +9,13 @@ export function enter() {
     controls.target.set(0, 0, 0);
 
 
-    showLoading(true);
+    // showLoading(true);
 
     if (root) {
         scene.add(root); // 已加载过，直接加回来
         return;
+    } else {
+        setLoadingState(true);
     }
 
     new GLTFLoader().load(

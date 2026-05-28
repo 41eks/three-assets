@@ -1,0 +1,49 @@
+
+import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
+
+
+
+import { GLTFLoader, type GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { setLoadingState, setLoadingPercent } from '../core/ui.js';
+import * as THREE from 'three';  // ← 加这行
+
+
+import { createPage } from '../core/createPage.js';
+
+
+
+const loadModel = (): Promise<THREE.Group> => {
+    return new Promise<THREE.Group>((resolve, reject) => {
+        const loader = new GLTFLoader();
+        loader.setMeshoptDecoder(MeshoptDecoder);
+        loader.load(
+            'blueberry/蓝莓.optimized.glb',
+            (gltf: GLTF) => {
+                const root = gltf.scene; // 保存根节点
+
+                // 将处理好的 gltf.scene 抛出
+                resolve(root);
+            },
+            (xhr) => {
+                // 进度回调（Promise 本身不支持持续的进度抛出，所以这里保留你的外部状态调用）
+                if (xhr.total > 0) { // 加上非零判断更安全
+                    const percent = Math.round((xhr.loaded / xhr.total) * 100);
+                    setLoadingPercent(percent);
+                }
+            },
+            (err) => {
+                console.error('模型加载失败', err);
+                setLoadingState(false);
+                // 抛出错误
+                reject(err);
+            }
+        );
+    });
+};
+
+
+
+const page = createPage(loadModel);
+
+export const enter = page.enter;
+export const leave = page.leave;
