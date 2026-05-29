@@ -8,7 +8,8 @@ export const routeConfig = [
     { hash: '#/glass', label: '玻璃', page: () => import('./pages/glass.ts') },
     { hash: '#/tart', label: '蛋挞', page: () => import('./pages/tart.ts') },
     { hash: '#/peach', label: '桃子', page: () => import('./pages/momo.ts') },
-    { hash: '#/pudding', label: '布丁', page: () => import('./pages/pudding.ts') },
+{ hash: '#/pudding', label: '布丁', page: () => import('./pages/pudding.ts') },
+{ hash: '#/orange', label: '橘子', page: () => import('./pages/orange.ts') },
 ];
 // export async function registerRoutes() {
 //     for (const { hash, page } of routeConfig) {
