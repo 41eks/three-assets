@@ -5,10 +5,10 @@ import * as THREE from 'three';  // ← 加这行
 
 // 定义一个页面生命周期接口
 interface Page {
-  enter: () => void;
-  leave: () => void;
+    enter: () => void;
+    leave: () => void;
 }
-export function createPage(glbLoadFn: () => Promise<THREE.Group<THREE.Object3DEventMap>>): Page {
+export function createPage(glbLoadFn: (scene: THREE.Scene) => Promise<THREE.Group<THREE.Object3DEventMap>>): Page {
 
 
     let root: THREE.Object3D | null = null; // 记住根节点
@@ -41,7 +41,7 @@ export function createPage(glbLoadFn: () => Promise<THREE.Group<THREE.Object3DEv
         }
 
 
-        glbLoadFn().then((model) => {
+        glbLoadFn(scene).then((model) => {
             root = model;
             console.log('模型加载完成');
             console.log(root

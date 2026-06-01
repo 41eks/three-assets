@@ -39,7 +39,10 @@
     "allowJs": true, // 允许编译 JS 文件
     "checkJs": false, // 暂时不对 JS 文件进行类型检查
     "strict": false, // 初期可以先关闭严格模式，等跑通后再设为 true
-    "jsx": "react-jsx",
+    // "jsx": "react-jsx",
+    "jsx": "react",
+    "jsxFactory": "h",
+    "jsxFragmentFactory": "Fragment",
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
