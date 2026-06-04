@@ -5,7 +5,7 @@ import { addRoute } from './core/router';
 export const routeConfig = [
     // { hash: '#/', label: 'Home', page: () => import('./pages/home.js') },
     { hash: '#/blueberry', label: '蓝莓', page: () => import('./pages/blueberry.ts') },
-    { hash: '#/glass', label: 'NPR', page: () => import('./pages/glass.ts') },
+    { hash: '#/npr', label: 'NPR', page: () => import('./pages/npr.ts') },
     { hash: '#/tart', label: '蛋挞', page: () => import('./pages/tart.ts') },
     { hash: '#/peach', label: '桃子', page: () => import('./pages/momo.ts') },
     { hash: '#/pudding', label: '布丁', page: () => import('./pages/pudding.ts') },

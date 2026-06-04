@@ -4,11 +4,21 @@ import { GLTFLoader, type GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { setLoadingState, setLoadingPercent } from '../core/ui.js';
 import * as THREE from 'three';  // ← 加这行
 
+import { createCoordinateInput } from '../component/CoordinateInput.js';
+
+import { createPage } from '../core/createPage.js';
+import { scene } from '../core/scene.js';
+
+// 1. 创建面板实例
+const coordPanel = createCoordinateInput("光照方向");
+
+// 2. 挂载到页面
+document.body.appendChild(coordPanel.element);
 
 // ✅ 卡通材质定义
 const celMaterial = new THREE.ShaderMaterial({
   uniforms: {
-    uLightDir: { value: new THREE.Vector3(10, 0, 10).normalize() },
+    uLightDir: { value: new THREE.Vector3(1, 0, 1).normalize() },
     uColorA: { value: new THREE.Color(0x0000ff) },  // 暗部：蓝色
     uColorB: { value: new THREE.Color(0x00ff99) },  // 亮部：青绿色
     uThreshold: { value: 0.5 },
@@ -46,10 +56,14 @@ const celMaterial = new THREE.ShaderMaterial({
         }
     `,
 });
-
-
-import { createPage } from '../core/createPage.js';
-import { scene } from '../core/scene.js';
+import { createEffect } from '../core/solid.js';
+// 2. 直接监听 getXYZ()，打通双向绑定！
+createEffect(() => {
+  // 因为 coordPanel.getXYZ() 内部调用了 state.get()
+  // 所以这个 Effect 会被自动记录为 coordState 的订阅者
+  const { x, y, z } = coordPanel.getXYZ();
+  celMaterial.uniforms.uLightDir.value.set(x, y, z).normalize();
+});
 
 
 const loadModel = (): Promise<THREE.Group> => {
@@ -82,5 +96,5 @@ const loadModel = (): Promise<THREE.Group> => {
   });
 };
 const page = createPage(loadModel);
-export const enter = page.enter;
-export const leave = page.leave;
+export const enter = () => { coordPanel.show(); page.enter() };
+export const leave = () => { coordPanel.hide(); page.leave() };
