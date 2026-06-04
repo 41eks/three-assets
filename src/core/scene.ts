@@ -18,19 +18,19 @@ camera.position.set(0, 0.5, 3);
 export const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
-const pmrem = new THREE.PMREMGenerator(renderer);
-// 加载一次 HDR
-new HDRLoader().load('studio.hdr', (hdr) => {
-    const envMap = pmrem.fromEquirectangular(hdr).texture;
+// const pmrem = new THREE.PMREMGenerator(renderer);
+// // 加载一次 HDR
+// new HDRLoader().load('studio.hdr', (hdr) => {
+//     const envMap = pmrem.fromEquirectangular(hdr).texture;
 
-    scene.environment = envMap;
+//     scene.environment = envMap;
 
-    scene.background = envMap;
+//     scene.background = envMap;
 
-    hdr.dispose();
+//     hdr.dispose();
 
-    pmrem.dispose();
-});
+//     pmrem.dispose();
+// });
 
 // 全局动画循环
 function animate() {
@@ -46,3 +46,30 @@ window.addEventListener('resize', () => {
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
+
+// 新增：导出一个初始化函数，供 main.ts 调用和等待
+export function initScene(): Promise<void> {
+    return new Promise((resolve, reject) => {
+        const pmrem = new THREE.PMREMGenerator(renderer);
+        pmrem.compileEquirectangularShader();
+
+        new HDRLoader().load(
+            'studio.hdr', // 确保路径正确
+            (texture) => {
+                const envMap = pmrem.fromEquirectangular(texture).texture;
+                scene.environment = envMap;
+                scene.background = envMap;
+                
+                texture.dispose();
+                pmrem.dispose();
+                
+                resolve(); // 场景及 HDR 加载完成
+            },
+            undefined, // onProgress
+            (error) => {
+                console.error('HDR 加载失败:', error);
+                reject(error);
+            }
+        );
+    });
+}
