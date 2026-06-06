@@ -25,9 +25,20 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
+const timer = new THREE.Timer();
+export type Updatable = (dt: number) => void;
+const frontTasks: Updatable[] = [];
+export const middleTasks: Updatable[] = [];
+const backTasks: Updatable[] = [];
 // 全局动画循环
 function animate() {
     requestAnimationFrame(animate);
+    timer.update();
+    const elapsed = timer.getElapsed();
+    const dt = timer.getDelta();
+    frontTasks.forEach((listener) => listener(dt));
+    middleTasks.forEach((listener) => listener(elapsed));
+    backTasks.forEach((listener) => listener(dt));
     controls.update();
     renderer.render(scene, camera);
 }

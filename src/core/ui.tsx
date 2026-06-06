@@ -46,25 +46,16 @@ updateBackBtn();
 const hdrSwitch = createHDRSwitch();
 document.body.appendChild(hdrSwitch.element);
 
-const noHDRSwitchRoutes = [
-"#/",
-"#/about",
-"#/login",
-];
+const noHDRSwitchRoutes = ["#/", "#/about", "#/login", "#/roadscene"];
 
 function updateHDRSwitch() {
-const currentRoute = location.hash || "#/";
+  const currentRoute = location.hash || "#/";
 
-const shouldHide =
-  noHDRSwitchRoutes.includes(currentRoute);
+  const shouldHide = noHDRSwitchRoutes.includes(currentRoute);
 
-hdrSwitch.element.style.display =
-  shouldHide ? "none" : "block";
+  hdrSwitch.element.style.display = shouldHide ? "none" : "block";
 }
 
-window.addEventListener(
-"hashchange",
-updateHDRSwitch
-);
+window.addEventListener("hashchange", updateHDRSwitch);
 
 updateHDRSwitch();

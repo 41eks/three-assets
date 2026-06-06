@@ -10,13 +10,9 @@ export const routeConfig = [
     { hash: '#/peach', label: '桃子', page: () => import('./pages/momo.ts') },
     { hash: '#/pudding', label: '布丁', page: () => import('./pages/pudding.ts') },
     { hash: '#/orange', label: '橘子', page: () => import('./pages/orange.ts') },
+    { hash: '#/roadscene', label: 'roadscene', page: () => import('./pages/road/index.ts') },
 ];
-// export async function registerRoutes() {
-//     for (const { hash, page } of routeConfig) {
-//         const mod = await page();
-//         addRoute(hash, mod);
-//     }
-// }
+
 
 // routes.js
 export async function registerRoutes() {
