@@ -18,19 +18,12 @@ camera.position.set(0, 0.5, 3);
 export const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
-// const pmrem = new THREE.PMREMGenerator(renderer);
-// // 加载一次 HDR
-// new HDRLoader().load('studio.hdr', (hdr) => {
-//     const envMap = pmrem.fromEquirectangular(hdr).texture;
-
-//     scene.environment = envMap;
-
-//     scene.background = envMap;
-
-//     hdr.dispose();
-
-//     pmrem.dispose();
-// });
+// 响应窗口缩放
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
 
 // 全局动画循环
 function animate() {
@@ -40,12 +33,12 @@ function animate() {
 }
 animate();
 
-// 响应窗口缩放
-window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-});
+let hdrEnvMap: THREE.Texture | null = null;
+
+import { createState, createEffect } from './solid';
+// export const hdrState = createState(false);
+const hdrLoaded = createState(false);
+export const hdrEnabled = createState(true);
 
 // 新增：导出一个初始化函数，供 main.ts 调用和等待
 export function initScene(): Promise<void> {
@@ -56,13 +49,13 @@ export function initScene(): Promise<void> {
         new HDRLoader().load(
             'studio.hdr', // 确保路径正确
             (texture) => {
-                const envMap = pmrem.fromEquirectangular(texture).texture;
-                scene.environment = envMap;
-                scene.background = envMap;
-                
+                hdrEnvMap = pmrem.fromEquirectangular(texture).texture;
+                // scene.environment = hdrEnvMap;
+                // scene.background = hdrEnvMap;
+                // 强制重新触发
+                hdrLoaded.set(true);
                 texture.dispose();
                 pmrem.dispose();
-                
                 resolve(); // 场景及 HDR 加载完成
             },
             undefined, // onProgress
@@ -73,3 +66,17 @@ export function initScene(): Promise<void> {
         );
     });
 }
+
+
+createEffect(() => {
+    const enabled = hdrLoaded.get() && hdrEnabled.get() && hdrEnvMap;;
+    if (enabled) {
+        scene.environment = hdrEnvMap;
+        scene.background = hdrEnvMap;
+
+    } else {
+        scene.environment = null;
+        scene.background = null;
+    }
+
+})

@@ -30,7 +30,7 @@ export function setLoadingPercent(p: number): void {
 }
 
 import { backBtn } from "../component/BackBtn.js";
-
+import { createHDRSwitch } from "../component/HDRSwitch.js";
 // 4. 将生成的 DOM 节点挂载到 body
 document.body.appendChild(backBtn);
 
@@ -42,3 +42,29 @@ function updateBackBtn() {
 
 window.addEventListener("hashchange", updateBackBtn);
 updateBackBtn();
+
+const hdrSwitch = createHDRSwitch();
+document.body.appendChild(hdrSwitch.element);
+
+const noHDRSwitchRoutes = [
+"#/",
+"#/about",
+"#/login",
+];
+
+function updateHDRSwitch() {
+const currentRoute = location.hash || "#/";
+
+const shouldHide =
+  noHDRSwitchRoutes.includes(currentRoute);
+
+hdrSwitch.element.style.display =
+  shouldHide ? "none" : "block";
+}
+
+window.addEventListener(
+"hashchange",
+updateHDRSwitch
+);
+
+updateHDRSwitch();

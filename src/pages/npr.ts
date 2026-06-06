@@ -5,16 +5,18 @@ import { setLoadingState, setLoadingPercent } from '../core/ui.js';
 import * as THREE from 'three';  // ← 加这行
 
 import { createCoordinateInput } from '../component/CoordinateInput.js';
-
+import { createHDRSwitch } from '../component/HDRSwitch.js';
 import { createPage } from '../core/createPage.js';
 import { scene } from '../core/scene.js';
 
 // 1. 创建面板实例
 const coordPanel = createCoordinateInput("光照方向");
-
+// const hdrSwitch = createHDRSwitch();
 // 2. 挂载到页面
 document.body.appendChild(coordPanel.element);
-
+// document.body.appendChild(
+//   hdrSwitch.element
+// );
 // ✅ 卡通材质定义
 const celMaterial = new THREE.ShaderMaterial({
   uniforms: {

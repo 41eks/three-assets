@@ -1,4 +1,9 @@
-import { createState } from "../core/solid.js";
+import { createState,createEffect } from "../core/solid.js";
+
+
+
+
+
 
 export function createCoordinateInput(title: string) {
   // 1. 在组件内部闭包中维护状态，外部不需要关心

@@ -14,7 +14,7 @@ export function enter() {
   `;
 
     const title = document.createElement('h1');
-    title.textContent = '模型展示';
+    title.textContent = '目录';
     title.style.cssText = `
     color: #111; font-size: 2.5rem;
     font-family: sans-serif; font-weight: 300;
