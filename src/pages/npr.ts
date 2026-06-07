@@ -58,6 +58,11 @@ const celMaterial = new THREE.ShaderMaterial({
         }
     `,
 });
+
+const emissiveMaterial = new THREE.MeshBasicMaterial({
+color: 0x000000,  // 纯黑，不受任何光照影响
+});
+
 import { createEffect } from '../core/solid.js';
 // 2. 直接监听 getXYZ()，打通双向绑定！
 createEffect(() => {
@@ -73,12 +78,24 @@ const loadModel = (): Promise<THREE.Group> => {
 
   return new Promise((resolve, reject) => {
     const loader = new GLTFLoader();
-    loader.load('glass.glb', (gltf: GLTF) => {
+    loader.load('npr.glb', (gltf: GLTF) => {
       const root = gltf.scene; // 保存根节点
       gltf.scene.traverse((child) => {
 
         if (child instanceof THREE.Mesh) {
-          child.material = celMaterial;
+          const mat = child.material;
+          // 确保材质不是数组（GLTF 偶尔会有多重材质数组的情况）
+          if (!Array.isArray(mat)) {
+            // 基类 Material 有 name，但没有 map
+            if (mat.name.includes('base')) {
+
+              child.material = celMaterial;
+            }
+            if (mat.name.includes('outline')) {
+              console.log(mat.name);
+              child.material = emissiveMaterial;
+            }
+          }
         }
       })
       resolve(root);
