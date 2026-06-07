@@ -3,14 +3,24 @@ const btnStyle = {
   position: "fixed",
   top: "20px",
   left: "20px",
-  color: "#111",
+  color: "white",
+  fontWeight: "700",
+
+  // textShadow: `
+  //   0 0 2px rgba(0,0,0,.8),
+  //   0 0 6px rgba(0,0,0,.8),
+  //   0 0 12px rgba(0,0,0,.8)
+  // `,
+  mixBlendMode: "difference",
   fontSize: "0.9rem",
+
   fontFamily: "sans-serif",
   textDecoration: "none",
   padding: "8px 16px",
-  border: "1px solid rgba(0,0,0,0.2)",
+  border: "2px solid rgba(0,0,0,0.2)",
   borderRadius: "8px",
-  background: "white",
+  // background: "white",
+  background: "transparent", // 透明背景
   zIndex: "100", // 注意，如果用纯数字，有些框架需要写成字符串，我们这里写字符串最稳妥
   transition: "all 0.2s",
   display: "none",
@@ -20,13 +30,11 @@ const btnStyle = {
 const handleMouseEnter = (e: MouseEvent) => {
   const el = e.target as HTMLElement;
   el.style.background = "#111";
-  el.style.color = "white";
 };
 
 const handleMouseLeave = (e: MouseEvent) => {
   const el = e.target as HTMLElement;
-  el.style.background = "white";
-  el.style.color = "#111";
+  el.style.background = "transparent";
 };
 
 export const backBtn = (
