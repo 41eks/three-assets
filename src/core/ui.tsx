@@ -14,7 +14,12 @@ const loadingState = createState("none");
 const loadingPercentState = createState(0);
 createEffect(() => {
   loading.style.display = loadingState.get();
-  loading.innerHTML = `<span id="loading-text">加载中 ${loadingPercentState.get()}%</span>`;
+  loading.innerHTML = `
+    <div style="display:flex; flex-direction:column; align-items:center; gap:20px;">
+  <div class="loader"></div>
+  <span id="loading-text">加载中 ${loadingPercentState.get()}%</span>
+</div>
+  `;
 });
 document.body.appendChild(loading);
 export function setLoadingState(state: boolean): void {

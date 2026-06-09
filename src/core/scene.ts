@@ -10,6 +10,12 @@ renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 document.body.appendChild(renderer.domElement);
 
+export const canvasVisible = createState(true);
+
+createEffect(() => {
+    renderer.domElement.style.display = canvasVisible.get() ? 'block' : 'none';
+});
+
 export const camera = new THREE.PerspectiveCamera(
     75, window.innerWidth / window.innerHeight, 0.1, 100
 );
@@ -48,7 +54,7 @@ let hdrEnvMap: THREE.Texture | null = null;
 
 import { createState, createEffect } from './solid';
 // export const hdrState = createState(false);
-const hdrLoaded = createState(false);
+export const hdrLoaded = createState(false);
 export const hdrEnabled = createState(true);
 
 // 新增：导出一个初始化函数，供 main.ts 调用和等待

@@ -1,4 +1,5 @@
 import './core/scene.js';
+import './style.css';
 import { startRouter } from './core/router';
 import { registerRoutes } from './routes';
 import './core/ui.js';       // ← 加这行
@@ -21,9 +22,8 @@ if (currentHash === '#/' || currentHash === '') {
 }
 
 
-// registerRoutes();
-// startRouter();
 
 console.log('正在加载 3D 场景...');
 await initScene();
 console.log('3D 场景加载完成！');
+
