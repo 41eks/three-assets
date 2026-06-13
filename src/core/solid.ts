@@ -3,6 +3,7 @@
 // 定义双向绑定的类型
 type Effect = {
     runner: () => void;
+    cleanups: (() => void)[];
     deps: any[];            // 存它依赖的 Signal 对象
     depsIndices: number[];  // 存它在各个 Signal.subscribers 数组里的下标
 };
@@ -14,13 +15,23 @@ type SignalNode = {
 
 let activeEffect: Effect | null = null;
 
+export function onCleanUp(fn: () => void) {
+    if (activeEffect) {
+        // ✨ 追加到数组中，而不是覆盖
+        activeEffect.cleanups.push(fn);
+    } else {
+        // ✨ 加入边界校验，防止程序崩溃
+        console.warn("onCleanUp 必须在 createEffect 的同步执行上下文中调用！");
+    }
 
+}
 
 export function createEffect(fn: () => void) {
     // 构造出一个标准的 Effect 对象
     const effect: Effect = {
         deps: [], // 初始化空账本
         depsIndices: [],
+        cleanups: [],
         runner: () => {
             // ✨ 核心清理动作：执行前，先把自己从所有旧的 Signal 依赖中清除
             cleanup(effect);
@@ -86,6 +97,14 @@ export function createState<T>(initialValue: T) {
 
 
 function cleanup(effect: Effect) {
+    // ✨ 1. 遍历并执行所有的用户清理函数
+    if (effect.cleanups.length > 0) {
+        for (let i = 0; i < effect.cleanups.length; i++) {
+            effect.cleanups[i]();
+        }
+        // ✨ 2. 核心！执行完后必须清空数组，防止下一次无端触发！
+        effect.cleanups.length = 0; 
+    }
     const { deps, depsIndices } = effect;
     if (deps.length === 0) return;
 

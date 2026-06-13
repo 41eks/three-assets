@@ -7,7 +7,7 @@ export const scene = new THREE.Scene();
 
 // renderer
 export const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
+// renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 document.body.appendChild(renderer.domElement);
@@ -24,7 +24,7 @@ export const defaultCamera = new THREE.PerspectiveCamera(
     75, window.innerWidth / window.innerHeight, 0.1, 100
 );
 defaultCamera.position.set(0, 0.5, 3);
-const orthoCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 1000); // 使用正交相机，适合做 2D 立绘
+const orthoCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1); // 使用正交相机，适合做 2D 立绘
 export let camera: THREE.PerspectiveCamera | THREE.OrthographicCamera = defaultCamera;
 export const activeCamera = createState('default');
 
@@ -33,6 +33,7 @@ controls.enableDamping = true;
 createEffect(() => {
     if (activeCamera.get() == "ortho") {
         camera = orthoCamera;
+        console.log(`camera changed ->${activeCamera.get()}`)
     } else {
 
         camera = defaultCamera;
@@ -40,43 +41,78 @@ createEffect(() => {
     controls.object = camera;
 
 })
-window.addEventListener('resize', () => {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
+
+
+export const rendererSize = createState({ w: window.innerWidth, h: window.innerHeight });
+export const fixRenderSize = createState(false);
+const handleResize = () => {
+    if (fixRenderSize.get()) {
+        return; // 被锁定，不作为
+    } else {
+        rendererSize.set({
+            w: window.innerWidth,
+            h: window.innerHeight
+        });
+    }
+};
+
+
+// window.addEventListener('resize', handleResize);
+createEffect(() => {
+    // 绑定事件
+    if (!fixRenderSize.get()) {
+        window.addEventListener('resize', handleResize);
+    }
+    else {
+        window.removeEventListener('resize', handleResize);
+    };
+})
+
+// 建议在外部定义一个缩放系数
+const frustumSize = 2;
+
+createEffect(() => {
+    const { w, h } = rendererSize.get();
+
+    activeCamera.get();
+    const aspect = w / h;
 
     if (camera instanceof THREE.PerspectiveCamera) {
-        camera.aspect = w / h;
+        camera.aspect = aspect;
     } else {
-        const aspect = w / h;
-
-        camera.left = -aspect;
-        camera.right = aspect;
+        // ✨ 更标准的正交相机自适应写法
+        camera.left = -frustumSize * aspect / 2;
+        camera.right = frustumSize * aspect / 2;
+        camera.top = frustumSize / 2;
+        camera.bottom = -frustumSize / 2;
     }
 
     camera.updateProjectionMatrix();
 
     renderer.setSize(w, h);
-});
+})
+
+
 export { controls };
 
 const timer = new THREE.Timer();
-export type Updatable = (dt: number) => void;
+export type Updatable = (t: { elapsed: number, dt: number }) => void;
 const frontTasks: Updatable[] = [];
 export const middleTasks: Updatable[] = [];
 const backTasks: Updatable[] = [];
 // 全局动画循环
-function animate() {
+function animate(timestamp = 0) {
     requestAnimationFrame(animate);
-    timer.update();
+    timer.update(timestamp);
     const elapsed = timer.getElapsed();
     const dt = timer.getDelta();
-    frontTasks.forEach((listener) => listener(dt));
-    middleTasks.forEach((listener) => listener(elapsed));
-    backTasks.forEach((listener) => listener(dt));
+    frontTasks.forEach((listener) => listener({ elapsed, dt }));
+    middleTasks.forEach((listener) => listener({ elapsed, dt }));
+    backTasks.forEach((listener) => listener({ elapsed, dt }));
     controls.update();
     renderer.render(scene, camera);
 }
-animate();
+animate(0);
 
 let hdrEnvMap: THREE.Texture | null = null;
 

@@ -51,7 +51,13 @@ updateBackBtn();
 const hdrSwitch = createHDRSwitch();
 document.body.appendChild(hdrSwitch.element);
 
-const noHDRSwitchRoutes = ["#/", "#/about", "#/login", "#/roadscene"];
+const noHDRSwitchRoutes = [
+  "#/",
+  "#/about",
+  "#/login",
+  "#/roadscene",
+  "#/sonnet",
+];
 
 function updateHDRSwitch() {
   const currentRoute = location.hash || "#/";

@@ -32,10 +32,10 @@ function enter() {
     controls.target.set(0, 0, 0);
     middleTasks.push((time) => {
         // dashLineGroup.position.y = -time * 0.2 % 3;
-        setDashLinePositionY(-time * 0.6 % 3);
+        setDashLinePositionY(-time.elapsed * 0.6 % 3);
         // treeGroup.position.z = time * 0.2 % 3;
-        setTreePositionZ(time * 0.6 % 3);
-        cloudGroup.position.x = Math.sin(time * 0.3) * 7
+        setTreePositionZ(time.elapsed * 0.6 % 3);
+        cloudGroup.position.x = Math.sin(time.elapsed * 0.3) * 7
     })
 
 
