@@ -148,3 +148,22 @@ function _run() {
         running = false;
     });
 };
+
+
+export function createMemo<T>(fn: () => T) {
+    // 1. 创建一个内部的 Signal，用来专门存储计算结果
+    const memoState = createState<T | undefined>(undefined);
+
+    // 2. 创建一个内部的 Effect，负责执行用户的计算函数
+    createEffect(() => {
+        // ✨ 当 fn() 内部依赖的 Signal 变化时，这个 Effect 会重新执行
+        const newValue = fn();
+
+        // ✨ 将新计算出的结果，存入刚才的 Signal 中
+        memoState.set(newValue);
+    });
+
+    // 3. 返回的其实是内部 Signal 的 get 方法
+    // 用户每次调用 memo()，本质上只是在读取 memoState 的缓存值！
+    return memoState.get;
+}

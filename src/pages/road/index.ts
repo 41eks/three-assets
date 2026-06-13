@@ -23,7 +23,7 @@ import { hdrEnabled } from '../../core/scene.js';
 import { setDashLinePositionY } from './road.js';
 import { setTreePositionZ } from './tree.js';
 import { middleTasks } from '../../core/scene.js';
-export function enter() {
+function enter() {
     renderer.setClearColor(0x95e4e8);
     scene.add(pageGroup);
     hdrEnabled.set(false);
@@ -40,13 +40,15 @@ export function enter() {
 
 
 }
-export function leave() {
+function leave() {
     renderer.setClearColor(0x000000);
     scene.remove(pageGroup);
     hdrEnabled.set(true);
     middleTasks.pop();
 }
-
+export default {
+    enter, leave
+}
 import * as THREE from 'three';  // ← 加这行
 
 

@@ -2,46 +2,50 @@
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { scene, camera, controls } from '../core/scene.js';
 import { setLoadingState, setLoadingPercent } from '../core/ui.js';
-let loaded = false; // ✅ 缓存标记，同一模型只加载一次
-let root = null; // 记住根节点
-export function enter() {
-    camera.position.set(0, 0.5, 3);
-    controls.target.set(0, 0, 0);
 
 
-    // showLoading(true);
 
-    if (root) {
-        scene.add(root); // 已加载过，直接加回来
-        return;
-    } else {
-        setLoadingState(true);
-    }
+import * as THREE from 'three';  // ← 加这行
 
-    new GLTFLoader().load(
-        'tartv2.glb',
-        (gltf) => {
-            root = gltf.scene; // 保存根节点
-            scene.add(root);
-            showLoading(false);
-        },
-        (xhr) => {
-            // 加载进度
-            const percent = Math.round((xhr.loaded / xhr.total) * 100);
-            document.getElementById('loading-text').textContent = `加载中 ${percent}%`;
-        },
-        (err) => {
-            console.error('模型加载失败', err);
-            showLoading(false);
-        }
-    );
-}
 
-export function leave() {
-    if (root) scene.remove(root); // 只移出场景，不销毁，下次还能用
-    loaded = false;
-}
+import { createPage } from '../core/createPage.js';
 
-function showLoading(show) {
-    document.getElementById('loading').style.display = show ? 'flex' : 'none';
-}
+
+
+const loadModel = (): Promise<THREE.Group> => {
+    return new Promise<THREE.Group>((resolve, reject) => {
+        const loader = new GLTFLoader();
+        // loader.setMeshoptDecoder(MeshoptDecoder);
+        loader.load(
+            'tartv2.glb',
+            (gltf) => {
+                const root = gltf.scene; // 保存根节点
+                // scene.add(root);
+                resolve(root);
+            },
+            (xhr) => {
+                // 进度回调（Promise 本身不支持持续的进度抛出，所以这里保留你的外部状态调用）
+                if (xhr.total > 0) { // 加上非零判断更安全
+                    const percent = Math.round((xhr.loaded / xhr.total) * 100);
+                    setLoadingPercent(percent);
+                }
+            },
+            (err) => {
+                console.error('模型加载失败', err);
+                setLoadingState(false);
+                // 抛出错误
+                reject(err);
+            }
+        );
+    });
+};
+
+
+
+// const page = createPage(loadModel);
+
+export default createPage(loadModel);
+
+
+
+

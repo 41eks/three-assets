@@ -42,8 +42,5 @@ const loadModel = (): Promise<THREE.Group> => {
 };
 
 
-
 const page = createPage(loadModel);
-
-export const enter = page.enter;
-export const leave = page.leave;
+export default page;

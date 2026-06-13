@@ -1,9 +1,11 @@
+import { createState, createEffect } from './solid';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { HDRLoader } from 'three/examples/jsm/loaders/HDRLoader.js';
 
 export const scene = new THREE.Scene();
 
+// renderer
 export const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -16,20 +18,46 @@ createEffect(() => {
     renderer.domElement.style.display = canvasVisible.get() ? 'block' : 'none';
 });
 
-export const camera = new THREE.PerspectiveCamera(
+
+//camera
+export const defaultCamera = new THREE.PerspectiveCamera(
     75, window.innerWidth / window.innerHeight, 0.1, 100
 );
-camera.position.set(0, 0.5, 3);
+defaultCamera.position.set(0, 0.5, 3);
+const orthoCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 1000); // 使用正交相机，适合做 2D 立绘
+export let camera: THREE.PerspectiveCamera | THREE.OrthographicCamera = defaultCamera;
+export const activeCamera = createState('default');
 
-export const controls = new OrbitControls(camera, renderer.domElement);
+const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
+createEffect(() => {
+    if (activeCamera.get() == "ortho") {
+        camera = orthoCamera;
+    } else {
 
-// 响应窗口缩放
+        camera = defaultCamera;
+    }
+    controls.object = camera;
+
+})
 window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+
+    if (camera instanceof THREE.PerspectiveCamera) {
+        camera.aspect = w / h;
+    } else {
+        const aspect = w / h;
+
+        camera.left = -aspect;
+        camera.right = aspect;
+    }
+
     camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    renderer.setSize(w, h);
 });
+export { controls };
 
 const timer = new THREE.Timer();
 export type Updatable = (dt: number) => void;
@@ -52,8 +80,6 @@ animate();
 
 let hdrEnvMap: THREE.Texture | null = null;
 
-import { createState, createEffect } from './solid';
-// export const hdrState = createState(false);
 export const hdrLoaded = createState(false);
 export const hdrEnabled = createState(true);
 
@@ -67,8 +93,6 @@ export function initScene(): Promise<void> {
             'studio.hdr', // 确保路径正确
             (texture) => {
                 hdrEnvMap = pmrem.fromEquirectangular(texture).texture;
-                // scene.environment = hdrEnvMap;
-                // scene.background = hdrEnvMap;
                 // 强制重新触发
                 hdrLoaded.set(true);
                 texture.dispose();

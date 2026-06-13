@@ -1,5 +1,5 @@
-import { addRoute } from './core/router';
-
+// import { addRoute } from './core/router';
+import type { Page } from './types/router.ts';
 // ✅ 新增模型只改这里
 
 export const routeConfig = [
@@ -13,23 +13,19 @@ export const routeConfig = [
     { hash: '#/roadscene', label: 'roadscene', page: () => import('./pages/road/index.ts') },
     { hash: '#/tartv2', label: '蛋挞', page: () => import('./pages/tartv2.ts') },
 ];
+import { routeMap } from './core/router.ts';
 
 
 // routes.js
 export async function registerRoutes() {
-    // const mods = await Promise.all(
-    //     routeConfig.map(({ page }) => page())
-    // );
-    // routeConfig.forEach(({ hash }, i) => {
-    //     addRoute(hash, mods[i]);
-    // });
+
 
     for (const { hash, page } of routeConfig) {
         try {
-            const mod = await page();
-            addRoute(hash, mod);
+            const { default: p } = await page() as { default: Page };
+            routeMap.set(hash, p);
         } catch (err) {
-            console.error(`ルート ${hash} の登録失敗:`, err); // 1つ失敗しても続行
+            console.error(`ルート ${hash} の登録失敗:`, err);
         }
     }
 }

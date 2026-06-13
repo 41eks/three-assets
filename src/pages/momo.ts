@@ -66,9 +66,4 @@ const loadModel = (): Promise<THREE.Group> => {
 
 
 
-// const page = createPage(loadMomoModel);
-const page = createPage(loadModel);
-
-export const enter = page.enter;
-export const leave = page.leave;
-// export { enter, leave };
+export default createPage(loadModel);

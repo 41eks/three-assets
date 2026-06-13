@@ -114,6 +114,4 @@ const loadModel = (): Promise<THREE.Group> => {
       })
   });
 };
-const page = createPage(loadModel);
-export const enter = () => { coordPanel.show(); page.enter() };
-export const leave = () => { coordPanel.hide(); page.leave() };
+export default createPage(loadModel);

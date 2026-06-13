@@ -1,13 +1,9 @@
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { scene, camera, controls, renderer } from './scene.js';
 import { setLoadingState, setLoadingPercent } from './ui.js';
-import * as THREE from 'three';  // ← 加这行
+import * as THREE from 'three';
+import type { Page } from '../types/router.js';
 
-// 定义一个页面生命周期接口
-interface Page {
-    enter: () => void;
-    leave: () => void;
-}
 export function createPage(glbLoadFn: (scene: THREE.Scene) => Promise<THREE.Group<THREE.Object3DEventMap>>): Page {
 
 
@@ -53,5 +49,5 @@ export function createPage(glbLoadFn: (scene: THREE.Scene) => Promise<THREE.Grou
     function leave() {
         if (root) scene.remove(root); // 只移出场景，不销毁，下次还能用
     }
-    return { enter, leave }
+    return { enter, leave, options: { hdr: true } }
 }

@@ -65,7 +65,9 @@ export function enter() {
     createEffect(() => {
         const loaded = hdrLoaded.get();
         links.forEach(a => {
-            if (loaded) {
+            const needsHdr = routeMap.get(a.getAttribute('href') ?? '')?.options?.hdr ?? false;
+            const ready = !needsHdr || loaded;
+            if (ready) {
                 delete a.dataset.disabled;
                 a.style.opacity = '1';
                 a.style.pointerEvents = 'auto';
@@ -90,3 +92,4 @@ export function leave() {
     app.innerHTML = '';
     app.style.cssText = '';
 }
+import { routeMap } from '../core/router.js';
