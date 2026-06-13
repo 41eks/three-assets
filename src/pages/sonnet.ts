@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import { scene, camera, controls, renderer } from '../core/scene.js';
 import Stat from 'three/examples/jsm/libs/stats.module.js';
 // const pageGroup = new THREE.Group();
@@ -26,6 +27,9 @@ const vertexShader = `
   void main() {
     vUv = uv; // 传递 UV 坐标给片元着色器
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    // ✨ 删掉了 projectionMatrix 和 modelViewMatrix
+    // 直接把平面的 [-1, 1] 顶点坐标作为屏幕坐标！
+    //gl_Position = vec4(position.xy, 0.0, 1.0);
   }
 `;
 
@@ -85,23 +89,22 @@ import { activeCamera } from '../core/scene.js';
 import { hdrEnabled } from '../core/scene.js';
 import { middleTasks, rendererSize, fixRenderSize } from '../core/scene.js';
 function enter() {
-    fixRenderSize.set(true);
-    const aspect = 940 / 1160;
-    let height = Math.floor(window.innerHeight * 0.8);
-    let width = Math.floor(height * aspect);
-    // renderer.setSize(width, height);
-    rendererSize.set({ w: width, h: height })
     activeCamera.set("ortho");
-    // renderer.setClearColor(0x95e4e8);
+    // 3. 计算立绘网格 (Plane) 应该缩放多大
+    // 假设正交相机的高度域是 [-1, 1]（总高度2）
+    // 我们想让立绘占满屏幕高度的 80% (0.8)
+    const targetHeight = 2 * 0.8;
+    const aspect = 940 / 1160;
+    const targetWidth = targetHeight * aspect;
+
+    // 直接缩放平面，而不要去缩放 Canvas！
+    plane.scale.set(targetWidth / 2, targetHeight / 2, 1);
+
+    // 4. 让 Three.js 接管背景（比如变成半透明黑或者某种颜色）
+    scene.background = new THREE.Color(0x00ff00);
     scene.add(plane);
     hdrEnabled.set(false);
-    // camera.position.set(0, 0.5, 3);
-    // camera.lookAt(new THREE.Vector3(0, 0, 0))
-    // controls.target.set(0, 0, 0);
-    middleTasks.push((time) => {
 
-        // cloudGroup.position.x = Math.sin(time * 0.3) * 7
-    })
 
 
 }
@@ -109,18 +112,17 @@ function leave() {
     fixRenderSize.set(false);
     rendererSize.set({ w: window.innerWidth, h: window.innerHeight })
     activeCamera.set("default");
-    // renderer.setClearColor(0x000000);
+    // 恢复背景
+    scene.background = null;
+
     scene.remove(plane);
     hdrEnabled.set(true);
-    middleTasks.pop();
+    // middleTasks.pop();
 }
 export default {
     enter, leave
 }
-import * as THREE from 'three';  // ← 加这行
 
-
-// import { createPage } from '../../core/createPage.js';
 
 
 
