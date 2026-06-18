@@ -1,53 +1,42 @@
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { scene, camera, controls, renderer } from './scene.js';
-import { setLoadingState, setLoadingPercent } from './ui.js';
+import { scene, camera, controls } from './scene.js';
+import { setLoadingState } from './ui.js';
 import * as THREE from 'three';
 import type { Page } from '../types/router.js';
 
-export function createPage(glbLoadFn: (scene: THREE.Scene) => Promise<THREE.Group<THREE.Object3DEventMap>>): Page {
+export function createPage(setup: () => Promise<THREE.Object3D> | THREE.Object3D): Page {
+    let root: THREE.Object3D | null = null;
 
-
-    let root: THREE.Object3D | null = null; // 记住根节点
-    function enter() {
+    async function enter() {
         camera.position.set(0, 0.5, 3);
         controls.target.set(0, 0, 0);
-        // 1. 记录当前页面的 hash
         const initHash = window.location.hash;
 
-        // --- 【新增】封装好的工具函数 ---
-
-        // 工具 1：校验页面并上屏
-        const addModel = (root: THREE.Object3D) => {
-            if (window.location.hash === initHash) {
-                scene.add(root);
-                setLoadingState(false);
-            } else {
-                console.log('页面已切换，模型仅缓存不上屏');
-                setLoadingState(false);
-            }
-        };
-
-        // showLoading(true);
-
         if (root) {
-            scene.add(root); // 已加载过，直接加回来
+            scene.add(root); 
             return;
-        } else {
-            setLoadingState(true);
         }
 
-
-        glbLoadFn(scene).then((model) => {
-            root = model;
-            console.log('模型加载完成');
-            console.log(root
-            );
-            addModel(root); // 如果 addModel 需要接收参数的话
+        setLoadingState(true);
+        try {
+            root = await setup();
+            if (window.location.hash === initHash) {
+                scene.add(root);
+            }
+        } catch (error) {
+            console.error('页面 setup 失败:', error);
+        } finally {
             setLoadingState(false);
-        });
+        }
     }
+
     function leave() {
-        if (root) scene.remove(root); // 只移出场景，不销毁，下次还能用
+        if (root) scene.remove(root);
     }
-    return { enter, leave, options: { hdr: true } }
+
+    // 只返回最基础的生命周期和默认选项
+    return { 
+        enter, 
+        leave, 
+        options: { hdr: true } 
+    };
 }

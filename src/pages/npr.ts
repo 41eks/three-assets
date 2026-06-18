@@ -60,9 +60,9 @@ const celMaterial = new THREE.ShaderMaterial({
 });
 
 const emissiveMaterial = new THREE.MeshBasicMaterial({
-color: 0x000000,  // 纯黑，不受任何光照影响
+  color: 0x000000,  // 纯黑，不受任何光照影响
 });
-
+import { assetsCache } from '../core/router.ts';
 import { createEffect } from '../core/solid.js';
 // 2. 直接监听 getXYZ()，打通双向绑定！
 createEffect(() => {
@@ -74,11 +74,12 @@ createEffect(() => {
 
 
 const loadModel = (): Promise<THREE.Group> => {
-
+  const buffer = assetsCache.get('npr.glb');
+  if (!buffer) throw new Error('未找到模型缓存');
 
   return new Promise((resolve, reject) => {
     const loader = new GLTFLoader();
-    loader.load('npr.glb', (gltf: GLTF) => {
+    loader.parse(buffer, null, (gltf: GLTF) => {
       const root = gltf.scene; // 保存根节点
       gltf.scene.traverse((child) => {
 
@@ -99,12 +100,6 @@ const loadModel = (): Promise<THREE.Group> => {
         }
       })
       resolve(root);
-    }, (xhr) => {
-      // 进度回调（Promise 本身不支持持续的进度抛出，所以这里保留你的外部状态调用）
-      if (xhr.total > 0) { // 加上非零判断更安全
-        const percent = Math.round((xhr.loaded / xhr.total) * 100);
-        setLoadingPercent(percent);
-      }
     },
       (err) => {
         console.error('模型加载失败', err);
@@ -113,5 +108,7 @@ const loadModel = (): Promise<THREE.Group> => {
         reject(err);
       })
   });
-};
-export default createPage(loadModel);
+}; const pagebase = createPage(loadModel);
+export default {
+  ...pagebase, assets: ['npr.glb']
+}

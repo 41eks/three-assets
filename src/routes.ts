@@ -11,8 +11,10 @@ export const routeConfig = [
     { hash: '#/pudding', label: '布丁', page: () => import('./pages/pudding.ts') },
     { hash: '#/orange', label: '橘子', page: () => import('./pages/orange.ts') },
     { hash: '#/roadscene', label: 'roadscene', page: () => import('./pages/road/index.ts') },
+    { hash: '#/appear', label: 'appear', page: () => import('./pages/appeareffect/index.ts') },
     { hash: '#/tartv2', label: '蛋挞', page: () => import('./pages/tartv2.ts') },
-    { hash: '#/sonnet', label: 'sonnet', page: () => import('./pages/sonnet.ts') },
+    { hash: '#/sonnet', label: 'sonetto', page: () => import('./pages/sonnet.ts') },
+    { hash: '#/penguin', label: 'penguin', page: () => import('./pages/penguin.ts') },
 ];
 import { routeMap } from './core/router.ts';
 

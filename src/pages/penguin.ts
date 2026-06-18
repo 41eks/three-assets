@@ -10,33 +10,24 @@ import * as THREE from 'three';  // ← 加这行
 import { assetsCache } from '../core/router.ts';
 import { createPage } from '../core/createPage.js';
 
-const glbfile = 'orange.glb'
+const glbfile = 'gyrs.glb'
 
-const loadModel = (): Promise<THREE.Group> => {
+
+// 1. 只处理 3D 逻辑
+const pageBase = createPage(async () => {
     const buffer = assetsCache.get(glbfile);
     if (!buffer) throw new Error('未找到模型缓存');
 
-    return new Promise<THREE.Group>((resolve, reject) => {
-        const loader = new GLTFLoader();
-        // loader.setMeshoptDecoder(MeshoptDecoder);
-        const gltf = loader.parseAsync(buffer
-            ,
-            ""
-        ).then(gltf => {
-            const root = gltf.scene; // 保存根节点
-
-            // 将处理好的 gltf.scene 抛出
-            resolve(root);
-
-        });
+    const loader = new GLTFLoader();
+    const gltf = await loader.parseAsync(buffer, '');
+    const root = gltf.scene;
 
 
-    },
-    );
-};
+    root.scale.set(0.4, 0.4, 0.4);
+    return root;
+});
 
-
-const pageBase = createPage(loadModel);
+// 2. 导出时手动组装给路由的最终对象
 export default {
     ...pageBase,
     assets: [glbfile], // 手动声明 assets

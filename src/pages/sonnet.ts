@@ -3,17 +3,27 @@ import { scene, camera, controls, renderer } from '../core/scene.js';
 import Stat from 'three/examples/jsm/libs/stats.module.js';
 // const pageGroup = new THREE.Group();
 
+// ✨ 新增：引入路由中的资源缓存 Map
+import { assetsCache } from '../core/router.ts';
 
-
+// 定义资源路径
+const VIDEO_URL = "https://files.rainbowgem.dpdns.org/public/vid/1999/sonnet.webm";
 
 // 2. 动态创建视频元素并创建纹理
 const video = document.createElement('video');
-video.src = "https://files.rainbowgem.dpdns.org/public/vid/1999/sonnet.webm";
+// video.src = "https://files.rainbowgem.dpdns.org/public/vid/1999/sonnet.webm";
 video.crossOrigin = "anonymous"; // 必须设置，解决跨域问题
 video.loop = true;               // 循环播放
 video.muted = true;              // 静音（浏览器要求静音才能自动播放或代码控制播放）
 video.playsInline = true;        // 重要：保证在移动端也能内联播放，不会自动全屏
 video.style.display = "none";    // 隐藏元素
+video.preload = "auto";  // ✨ 新增：强制浏览器尽早预加载视频数据
+
+// ✨ 新增：使用状态标记视频是否已经加载到足够播放的帧
+let isVideoReady = false;
+video.addEventListener('canplay', () => {
+    isVideoReady = true;
+});
 
 const texture = new THREE.VideoTexture(video);
 texture.minFilter = THREE.LinearFilter;
@@ -75,14 +85,31 @@ const material = new THREE.ShaderMaterial({
 const geometry = new THREE.PlaneGeometry(2, 2);
 const plane = new THREE.Mesh(geometry, material);
 
+// 点击播放后备方案 (提升作用域以便重复使用)
+const handlePlay = () => {
+    if (isVideoReady || video.readyState >= 3) {
+        video.play().catch(e => console.warn("自动播放失败被浏览器拦截:", e));
+    }
+};
+
+// // 5. 点击播放视频
+// document.addEventListener('click', () => {
+//     // ✨ 新增：捕获 Promise 异常，并确保视频就绪后再播放
+//     if (isVideoReady || video.readyState >= 3) {
+//         video.play().catch(e => console.warn("自动播放失败被浏览器拦截:", e));
+//     } else {
+//         // 如果点击时还没加载好，等加载好后立刻播放
+//         video.addEventListener('canplay', () => {
+//             video.play().catch(e => console.warn("自动播放失败被浏览器拦截:", e));
+//         }, { once: true });
+//     }
+// }, { once: true });
 
 
-
-
-// 5. 点击播放视频（因为浏览器限制自动播放）
-document.addEventListener('click', () => {
-    video.play();
-}, { once: true }); // 只监听一次
+// // 5. 点击播放视频（因为浏览器限制自动播放）
+// document.addEventListener('click', () => {
+//     video.play();
+// }, { once: true }); // 只监听一次
 
 
 import { activeCamera } from '../core/scene.js';
@@ -105,6 +132,24 @@ function enter() {
     scene.add(plane);
     hdrEnabled.set(false);
 
+    // ✨ 核心适配逻辑：从缓存中读取 ArrayBuffer 并转换为视频源
+    if (!video.src) {
+        const buffer = assetsCache.get(VIDEO_URL);
+        if (buffer) {
+            // 将 ArrayBuffer 包装成 Blob，生成本地可访问的 URL
+            const blob = new Blob([buffer], { type: 'video/webm' });
+            video.src = URL.createObjectURL(blob);
+        } else {
+            console.error("未找到视频缓存！");
+        }
+    }
+
+    // 尝试播放（因为静音 muted=true，大部分现代浏览器允许直接 play）
+    video.play().catch(e => {
+        console.warn("直接播放失败，等待用户点击交互:", e);
+        // 如果拦截了，降级到需要点击
+        document.addEventListener('click', handlePlay, { once: true });
+    });
 
 
 }
@@ -118,9 +163,15 @@ function leave() {
     scene.remove(plane);
     hdrEnabled.set(true);
     // middleTasks.pop();
+
+    // ✨ 新增：离开页面时暂停视频并重置事件，节约性能
+    video.pause();
+    document.removeEventListener('click', handlePlay);
 }
 export default {
-    enter, leave
+    enter, leave,
+    // ✨ 新增：声明该页面需要的资源，路由会在触发 enter 前自动下载并缓存它
+    assets: [VIDEO_URL]
 }
 
 

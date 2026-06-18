@@ -28,16 +28,6 @@
     "allowImportingTsExtensions": true,
     // 3. 配合上一步，告诉 TS：我只用它来做类型检查，不靠 tsc 来输出 js 文件（打包交给 Vite）
     "noEmit": true,
-    // "exactOptionalPropertyTypes": true,
-    // Style Options
-    // "noImplicitReturns": true,
-    // "noImplicitOverride": true,
-    // "noUnusedLocals": true,
-    // "noUnusedParameters": true,
-    // "noFallthroughCasesInSwitch": true,
-    // "noPropertyAccessFromIndexSignature": true,
-    // Recommended Options
-    // "strict": true,
     "allowJs": true, // 允许编译 JS 文件
     "checkJs": false, // 暂时不对 JS 文件进行类型检查
     "strict": false, // 初期可以先关闭严格模式，等跑通后再设为 true
@@ -50,5 +40,11 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
-  }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue"
+  ]
 }

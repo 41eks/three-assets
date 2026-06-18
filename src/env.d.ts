@@ -13,4 +13,16 @@ declare global {
             [elemName: string]: any;
         }
     }
+    module '*.glsl' {
+        const value: string;
+        export default value;
+    }
+    module '*.vert' {
+        const value: string;
+        export default value;
+    }
+    module '*.frag' {
+        const value: string;
+        export default value;
+    }
 }
