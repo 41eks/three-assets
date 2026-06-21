@@ -29,8 +29,8 @@ function enter() {
     renderer.setClearColor(0x95e4e8);
     scene.add(pageGroup);
     hdrEnabled.set(false);
-    camera.position.set(0, 0.5, 3);
-    camera.lookAt(new THREE.Vector3(0, 0, 0))
+    camera().position.set(0, 0.5, 3);
+    camera().lookAt(new THREE.Vector3(0, 0, 0))
     // controls.target.set(0, 0, 0);
     middleTasks.push((time) => {
         // dashLineGroup.position.y = -time * 0.2 % 3;
@@ -51,7 +51,7 @@ function leave() {
 export default {
     enter, leave
 }
-import * as THREE from 'three';  
+import * as THREE from 'three';
 
 
 

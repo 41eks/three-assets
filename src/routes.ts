@@ -15,6 +15,7 @@ export const routeConfig = [
     { hash: '#/tartv2', label: '蛋挞', page: () => import('./pages/tartv2.ts') },
     { hash: '#/sonnet', label: 'sonetto', page: () => import('./pages/sonnet.ts') },
     { hash: '#/penguin', label: 'penguin', page: () => import('./pages/penguin.ts') },
+    { hash: '#/puff', label: '河豚', page: () => import('./pages/puff.ts') },
 ];
 import { routeMap } from './core/router.ts';
 

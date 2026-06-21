@@ -44,7 +44,7 @@ export const pixelPass = new ShaderPass(PixelShader);
 composer.addPass(pixelPass);
 
 // 💡 导出一个状态，供业务层(UI)随时开启/关闭像素滤镜
-export const pixelFilterEnabled = createState(true);
+export const pixelFilterEnabled = createState(false);
 
 createEffect(() => {
     pixelPass.enabled = pixelFilterEnabled.get();

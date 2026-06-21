@@ -92,24 +92,7 @@ const handlePlay = () => {
     }
 };
 
-// // 5. 点击播放视频
-// document.addEventListener('click', () => {
-//     // ✨ 新增：捕获 Promise 异常，并确保视频就绪后再播放
-//     if (isVideoReady || video.readyState >= 3) {
-//         video.play().catch(e => console.warn("自动播放失败被浏览器拦截:", e));
-//     } else {
-//         // 如果点击时还没加载好，等加载好后立刻播放
-//         video.addEventListener('canplay', () => {
-//             video.play().catch(e => console.warn("自动播放失败被浏览器拦截:", e));
-//         }, { once: true });
-//     }
-// }, { once: true });
 
-
-// // 5. 点击播放视频（因为浏览器限制自动播放）
-// document.addEventListener('click', () => {
-//     video.play();
-// }, { once: true }); // 只监听一次
 
 
 import { activeCamera } from '../core/camera.ts';
@@ -154,10 +137,10 @@ function enter() {
 
 
 }
-import { fixRenderSize,rendererSize } from '../store/viewport.ts';
+// import { fixRenderSize, rendererSize } from '../store/viewport.ts';
 function leave() {
-    fixRenderSize.set(false);
-    rendererSize.set({ w: window.innerWidth, h: window.innerHeight })
+    // fixRenderSize.set(false);
+    // rendererSize.set({ w: window.innerWidth, h: window.innerHeight })
     activeCamera.set("default");
     // 恢复背景
     scene.background = null;

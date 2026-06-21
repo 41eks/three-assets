@@ -9,12 +9,12 @@ export function createPage(setup: () => Promise<THREE.Object3D> | THREE.Object3D
     let root: THREE.Object3D | null = null;
 
     async function enter() {
-        camera.position.set(0, 0.5, 3);
+        camera().position.set(0, 0.5, 3);
         controls.target.set(0, 0, 0);
         const initHash = window.location.hash;
 
         if (root) {
-            scene.add(root); 
+            scene.add(root);
             return;
         }
 
@@ -36,9 +36,9 @@ export function createPage(setup: () => Promise<THREE.Object3D> | THREE.Object3D
     }
 
     // 只返回最基础的生命周期和默认选项
-    return { 
-        enter, 
-        leave, 
-        options: { hdr: true } 
+    return {
+        enter,
+        leave,
+        options: { hdr: true }
     };
 }
