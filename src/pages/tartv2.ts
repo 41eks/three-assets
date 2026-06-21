@@ -1,6 +1,6 @@
 
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { scene, camera, controls } from '../core/scene.js';
+// import { scene, camera, controls } from '../core/scene.js';
 import { setLoadingState, setLoadingPercent } from '../core/ui.js';
 
 

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { scene, camera, controls, renderer } from '../core/scene.js';
+// import { scene, camera, controls, renderer } from '../core/scene.js';
 import Stat from 'three/examples/jsm/libs/stats.module.js';
 // const pageGroup = new THREE.Group();
 
@@ -112,9 +112,10 @@ const handlePlay = () => {
 // }, { once: true }); // 只监听一次
 
 
-import { activeCamera } from '../core/scene.js';
+import { activeCamera } from '../core/camera.ts';
 import { hdrEnabled } from '../core/scene.js';
-import { middleTasks, rendererSize, fixRenderSize } from '../core/scene.js';
+import { scene } from '../store/webgl.ts';
+// import { middleTasks } from '../core/scene.js';
 function enter() {
     activeCamera.set("ortho");
     // 3. 计算立绘网格 (Plane) 应该缩放多大
@@ -153,6 +154,7 @@ function enter() {
 
 
 }
+import { fixRenderSize,rendererSize } from '../store/viewport.ts';
 function leave() {
     fixRenderSize.set(false);
     rendererSize.set({ w: window.innerWidth, h: window.innerHeight })

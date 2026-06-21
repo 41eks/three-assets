@@ -7,7 +7,7 @@ import * as THREE from 'three';  // ← 加这行
 import { createCoordinateInput } from '../component/CoordinateInput.js';
 import { createHDRSwitch } from '../component/HDRSwitch.js';
 import { createPage } from '../core/createPage.js';
-import { scene } from '../core/scene.js';
+// import { scene, camera } from '../core/scene.js';
 
 // 1. 创建面板实例
 const coordPanel = createCoordinateInput("光照方向");
@@ -110,5 +110,13 @@ const loadModel = (): Promise<THREE.Group> => {
   });
 }; const pagebase = createPage(loadModel);
 export default {
-  ...pagebase, assets: ['npr.glb']
+  ...pagebase, assets: ['npr.glb'],
+  enter: () => {
+    coordPanel.show();
+    pagebase.enter()
+  },
+  leave: () => {
+    coordPanel.hide();
+    pagebase.leave();
+  }
 }

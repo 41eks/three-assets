@@ -1,7 +1,7 @@
 import { routeConfig } from '../routes.js';
-import { hdrLoaded, canvasVisible } from '../core/scene.js';
+import { hdrLoaded } from '../core/scene.js';
 import { createEffect } from '../core/solid.js';
-
+import { canvasVisible } from '../store/webgl.js';
 export function enter() {
     canvasVisible.set(false);
     // document.querySelector('canvas')?.style.setProperty('display', 'none');

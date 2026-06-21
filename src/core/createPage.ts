@@ -1,7 +1,9 @@
-import { scene, camera, controls } from './scene.js';
+import { controls } from './scene.js';
 import { setLoadingState } from './ui.js';
 import * as THREE from 'three';
 import type { Page } from '../types/router.js';
+import { currentCamera as camera } from './camera.js';
+import { scene } from '../store/webgl.js';
 
 export function createPage(setup: () => Promise<THREE.Object3D> | THREE.Object3D): Page {
     let root: THREE.Object3D | null = null;

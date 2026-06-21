@@ -1,4 +1,4 @@
-import { scene, camera, controls, renderer } from '../../core/scene.js';
+// import { scene, camera, controls, renderer } from '../../core/scene.js';
 import Stat from 'three/examples/jsm/libs/stats.module.js';
 import { ground, buildingGroup, cloudGroup } from './bg.js';
 import { treeGroup } from './tree.js';
@@ -17,7 +17,9 @@ const directionalLight =
 pageGroup.add(ambientLight);
 pageGroup.add(directionalLight);
 
-
+import { currentCamera as camera } from '../../core/camera.js';
+import { scene } from '../../store/webgl.js';
+import { renderer } from '../../store/webgl.js';
 
 import { hdrEnabled } from '../../core/scene.js';
 import { setDashLinePositionY } from './road.js';
@@ -29,7 +31,7 @@ function enter() {
     hdrEnabled.set(false);
     camera.position.set(0, 0.5, 3);
     camera.lookAt(new THREE.Vector3(0, 0, 0))
-    controls.target.set(0, 0, 0);
+    // controls.target.set(0, 0, 0);
     middleTasks.push((time) => {
         // dashLineGroup.position.y = -time * 0.2 % 3;
         setDashLinePositionY(-time.elapsed * 0.6 % 3);
@@ -49,10 +51,7 @@ function leave() {
 export default {
     enter, leave
 }
-import * as THREE from 'three';  // ← 加这行
-
-
-// import { createPage } from '../../core/createPage.js';
+import * as THREE from 'three';  
 
 
 
