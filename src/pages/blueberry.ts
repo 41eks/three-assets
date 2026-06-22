@@ -7,42 +7,47 @@ import { GLTFLoader, type GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { setLoadingState, setLoadingPercent } from '../core/ui.js';
 import * as THREE from 'three';  // ← 加这行
 
+import { assetsCache } from '../core/router.ts';
 
 import { createPage } from '../core/createPage.js';
 
-
+const glbfile = 'blueberry/蓝莓.optimized.glb'
 
 const loadModel = (): Promise<THREE.Group> => {
+    const buffer = assetsCache.get(glbfile);
+    if (!buffer) throw new Error('未找到模型缓存');
     return new Promise<THREE.Group>((resolve, reject) => {
         const loader = new GLTFLoader();
         loader.setMeshoptDecoder(MeshoptDecoder);
-        loader.load(
-            'blueberry/蓝莓.optimized.glb',
-            (gltf: GLTF) => {
-                const root = gltf.scene; // 保存根节点
+        loader.parseAsync(
+            buffer,
+            ""
 
-                // 将处理好的 gltf.scene 抛出
-                resolve(root);
-            },
-            (xhr) => {
-                // 进度回调（Promise 本身不支持持续的进度抛出，所以这里保留你的外部状态调用）
-                if (xhr.total > 0) { // 加上非零判断更安全
-                    const percent = Math.round((xhr.loaded / xhr.total) * 100);
-                    setLoadingPercent(percent);
-                }
-            },
-            (err) => {
-                console.error('模型加载失败', err);
-                setLoadingState(false);
-                // 抛出错误
-                reject(err);
-            }
-        );
+        ).then((gltf: GLTF) => {
+            const root = gltf.scene; // 保存根节点
+
+            // 将处理好的 gltf.scene 抛出
+            resolve(root);
+        });
     });
 };
+import { pixelFilterEnabled } from '../core/composer.ts';
+import { createSwitchFactory } from '../component/HDRSwitch.tsx';
+const createPixelFilterSwitch = createSwitchFactory(pixelFilterEnabled, "Pixel")
+const pfSwitch = createPixelFilterSwitch();
 
-
-
-// const page = createPage(loadModel);
-
-export default createPage(loadModel);
+document.body.appendChild(pfSwitch.element);
+// export default createPage(loadModel);
+const pagebase = createPage(loadModel);
+export default {
+    ...pagebase,
+    assets: [glbfile], // 手动声明 assets
+    enter: () => {
+        pfSwitch.element.style.display = 'block';
+        pagebase.enter()
+    },
+    leave: () => {
+        pfSwitch.element.style.display = 'none';
+        pagebase.leave();
+    }
+};
