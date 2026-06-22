@@ -5,7 +5,7 @@ import { setLoadingState, setLoadingPercent } from '../../core/ui.js';
 import * as THREE from 'three';  // ← 加这行
 
 import { createCoordinateInput } from '../../component/CoordinateInput.js';
-import { createHDRSwitch } from '../../component/HDRSwitch.js';
+import { createHDRSwitch } from '../../component/Switch.js';
 import { createPage } from '../../core/createPage.js';
 // import { scene } from '../../core/scene.js';
 

@@ -1,14 +1,18 @@
 
 
 import { GLTFLoader, type GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { setLoadingState, setLoadingPercent } from '../core/ui.js';
+import { setLoadingState, setLoadingPercent } from '../../core/ui.js';
 import * as THREE from 'three';  // ← 加这行
 
-import { createCoordinateInput } from '../component/CoordinateInput.js';
-import { createHDRSwitch } from '../component/HDRSwitch.js';
-import { createPage } from '../core/createPage.js';
+import { createCoordinateInput } from '../../component/CoordinateInput.js';
+import { createHDRSwitch } from '../../component/Switch.js';
+import { createPage } from '../../core/createPage.js';
 // import { scene, camera } from '../core/scene.js';
+import vertexShader from './vert.glsl'
 
+import fragmentShader from './frag.glsl'
+
+const glbfile = 'nprv2.glb';
 // 1. 创建面板实例
 const coordPanel = createCoordinateInput("光照方向");
 // const hdrSwitch = createHDRSwitch();
@@ -26,44 +30,15 @@ const celMaterial = new THREE.ShaderMaterial({
     uThreshold: { value: 0.5 },
     uSoftness: { value: 0.02 },  // 边缘柔和度，0=硬切
   },
-  vertexShader: `
-        varying vec3 vNormal;
-
-        void main() {
-            // 将法线转换到世界空间
-            vNormal = normalize(mat3(modelMatrix) * normal);
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-    `,
-  fragmentShader: `
-        uniform vec3 uLightDir;
-        uniform vec3 uColorA;
-        uniform vec3 uColorB;
-        uniform float uThreshold;
-        uniform float uSoftness;
-
-        varying vec3 vNormal;
-
-        void main() {
-            // 计算法线和光照方向的点积（就是 Blender 里着色器转RGB做的事）
-            float diff = dot(vNormal, uLightDir);
-
-            // smoothstep = Blender 里"大于+阈值"的平滑版本
-            float mask = smoothstep(uThreshold - uSoftness, uThreshold + uSoftness, diff);
-
-            // mix = Blender 里的混合节点
-            vec3 color = mix(uColorA, uColorB, mask);
-
-            gl_FragColor = vec4(color, 1.0);
-        }
-    `,
+  vertexShader,
+  fragmentShader,
 });
 
 const emissiveMaterial = new THREE.MeshBasicMaterial({
   color: 0x000000,  // 纯黑，不受任何光照影响
 });
-import { assetsCache } from '../core/router.ts';
-import { createEffect } from '../core/solid.js';
+import { assetsCache } from '../../core/router.ts';
+import { createEffect } from '../../core/solid.js';
 // 2. 直接监听 getXYZ()，打通双向绑定！
 createEffect(() => {
   // 因为 coordPanel.getXYZ() 内部调用了 state.get()
@@ -74,7 +49,7 @@ createEffect(() => {
 
 
 const loadModel = (): Promise<THREE.Group> => {
-  const buffer = assetsCache.get('npr.glb');
+  const buffer = assetsCache.get(glbfile);
   if (!buffer) throw new Error('未找到模型缓存');
 
   return new Promise((resolve, reject) => {
@@ -92,7 +67,7 @@ const loadModel = (): Promise<THREE.Group> => {
 
               child.material = celMaterial;
             }
-            if (mat.name.includes('outline')) {
+            if (mat.name.includes('shell')) {
               console.log(mat.name);
               child.material = emissiveMaterial;
             }
@@ -110,7 +85,7 @@ const loadModel = (): Promise<THREE.Group> => {
   });
 }; const pagebase = createPage(loadModel);
 export default {
-  ...pagebase, assets: ['npr.glb'],
+  ...pagebase, assets: [glbfile],
   enter: () => {
     coordPanel.show();
     pagebase.enter()

@@ -32,7 +32,7 @@ const loadModel = (): Promise<THREE.Group> => {
     });
 };
 import { pixelFilterEnabled } from '../core/composer.ts';
-import { createSwitchFactory } from '../component/HDRSwitch.tsx';
+import { createSwitchFactory } from '../component/Switch.tsx';
 const createPixelFilterSwitch = createSwitchFactory(pixelFilterEnabled, "Pixel")
 const pfSwitch = createPixelFilterSwitch();
 

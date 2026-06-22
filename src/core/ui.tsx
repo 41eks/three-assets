@@ -35,7 +35,7 @@ export function setLoadingPercent(p: number): void {
 }
 
 import { backBtn } from "../component/BackBtn.js";
-import { createHDRSwitch } from "../component/HDRSwitch.js";
+import { createHDRSwitch } from "../component/Switch.js";
 // 4. 将生成的 DOM 节点挂载到 body
 document.body.appendChild(backBtn);
 
@@ -56,7 +56,7 @@ const noHDRSwitchRoutes = [
   "#/about",
   "#/login",
   "#/roadscene",
-  "#/sonnet",
+  "#/sonetto",
 ];
 
 function updateHDRSwitch() {

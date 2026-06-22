@@ -1,23 +1,30 @@
 import * as THREE from 'three';
 // import { scene, camera, controls, renderer } from '../core/scene.js';
 import Stat from 'three/examples/jsm/libs/stats.module.js';
-// const pageGroup = new THREE.Group();
 
-// ✨ 新增：引入路由中的资源缓存 Map
-import { assetsCache } from '../core/router.ts';
+import { assetsCache } from '../../core/router.ts';
+import bgimg from '../../assets/9_暴雨前夕_compress.jpg';
+
+
+// ✨ 新增：加载背景图片纹理
+const textureLoader = new THREE.TextureLoader();
+const bgTexture = textureLoader.load(bgimg);
+// 确保色彩空间正确（现代 Three.js 强烈建议设置，否则图片可能显得灰暗或偏色）
+bgTexture.colorSpace = THREE.SRGBColorSpace;
+
+
 
 // 定义资源路径
 const VIDEO_URL = "https://files.rainbowgem.dpdns.org/public/vid/1999/sonnet.webm";
 
 // 2. 动态创建视频元素并创建纹理
 const video = document.createElement('video');
-// video.src = "https://files.rainbowgem.dpdns.org/public/vid/1999/sonnet.webm";
 video.crossOrigin = "anonymous"; // 必须设置，解决跨域问题
 video.loop = true;               // 循环播放
 video.muted = true;              // 静音（浏览器要求静音才能自动播放或代码控制播放）
 video.playsInline = true;        // 重要：保证在移动端也能内联播放，不会自动全屏
 video.style.display = "none";    // 隐藏元素
-video.preload = "auto";  // ✨ 新增：强制浏览器尽早预加载视频数据
+video.preload = "auto"; 
 
 // ✨ 新增：使用状态标记视频是否已经加载到足够播放的帧
 let isVideoReady = false;
@@ -31,45 +38,9 @@ texture.magFilter = THREE.LinearFilter;
 texture.format = THREE.RGBAFormat;
 
 
-// 3. 编写自定义着色器 (Shader)
-const vertexShader = `
-  varying vec2 vUv;
-  void main() {
-    vUv = uv; // 传递 UV 坐标给片元着色器
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-    // ✨ 删掉了 projectionMatrix 和 modelViewMatrix
-    // 直接把平面的 [-1, 1] 顶点坐标作为屏幕坐标！
-    //gl_Position = vec4(position.xy, 0.0, 1.0);
-  }
-`;
+import vertexShader from './vert.glsl'
 
-const fragmentShader = `
-  uniform sampler2D map;
-  varying vec2 vUv;
-
-  void main() {
-    // vUv.y 在 WebGL 中是从下到上 (0.0 到 1.0)
-    // 视频上半部分 (颜色): y 范围是 0.5 到 1.0
-    vec2 colorUv = vec2(vUv.x, vUv.y * 0.5 + 0.5);
-    // 视频下半部分 (黑白蒙版): y 范围是 0.0 到 0.5
-    vec2 alphaUv = vec2(vUv.x, vUv.y * 0.5);
-
-    // 分别采样颜色和蒙版
-    vec4 color = texture2D(map, colorUv);
-    vec4 mask = texture2D(map, alphaUv);
-
-    // 方式一：平滑透明 (推荐)
-    // 直接使用蒙版的红色通道作为透明度，边缘会非常平滑
-    // float alpha = mask.r;
-
-    // 方式二：硬边缘透明 (完全模拟你原来的 Canvas 代码 <= 90 的逻辑)
-    // 90 / 255.0 ≈ 0.353
-    float alpha = step(0.353, mask.r);
-
-    // 输出最终颜色
-    gl_FragColor = vec4(color.rgb, alpha);
-  }
-`;
+import fragmentShader from './frag.glsl'
 
 // 4. 创建材质并应用
 const material = new THREE.ShaderMaterial({
@@ -92,12 +63,12 @@ const handlePlay = () => {
     }
 };
 
+import { renderer } from '../../store/webgl.ts';
 
 
-
-import { activeCamera } from '../core/camera.ts';
-import { hdrEnabled } from '../core/scene.js';
-import { scene } from '../store/webgl.ts';
+import { activeCamera } from '../../core/camera.ts';
+import { hdrEnabled } from '../../core/scene.js';
+import { scene } from '../../store/webgl.ts';
 // import { middleTasks } from '../core/scene.js';
 function enter() {
     activeCamera.set("ortho");
@@ -112,7 +83,20 @@ function enter() {
     plane.scale.set(targetWidth / 2, targetHeight / 2, 1);
 
     // 4. 让 Three.js 接管背景（比如变成半透明黑或者某种颜色）
-    scene.background = new THREE.Color(0x00ff00);
+    // scene.background =bgTexture;
+
+    // 1. 设置 CSS 背景（不受 3D 场景光照影响，保持原比例）
+    if (renderer && renderer.domElement) {
+        const canvas = renderer.domElement;
+        canvas.style.backgroundImage = `url(${bgimg})`;
+        canvas.style.backgroundSize = 'cover'; // 或者 'contain' 保持原比例不拉伸
+        canvas.style.backgroundPosition = 'center center';
+        canvas.style.backgroundRepeat = 'no-repeat';
+        
+        // ✨ 新增核心：强制让 Three.js 背景清理为“完全透明”
+        // 这样底层的 CSS 背景图片才能透过 Canvas 显现出来
+        renderer.setClearColor(0x000000, 0); 
+    }
     scene.add(plane);
     hdrEnabled.set(false);
 
@@ -142,20 +126,24 @@ function leave() {
     // fixRenderSize.set(false);
     // rendererSize.set({ w: window.innerWidth, h: window.innerHeight })
     activeCamera.set("default");
-    // 恢复背景
-    scene.background = null;
+   
+    // 2. 清理工作
+    if (renderer && renderer.domElement) {
+        renderer.domElement.style.backgroundImage = 'none';
+        
+        // ✨ 新增核心：离开时，恢复 Three.js 默认的背景清理颜色（通常是不透明黑 1.0）
+        renderer.setClearColor(0x000000, 1); 
+    }
 
     scene.remove(plane);
     hdrEnabled.set(true);
     // middleTasks.pop();
 
-    // ✨ 新增：离开页面时暂停视频并重置事件，节约性能
     video.pause();
     document.removeEventListener('click', handlePlay);
 }
 export default {
     enter, leave,
-    // ✨ 新增：声明该页面需要的资源，路由会在触发 enter 前自动下载并缓存它
     assets: [VIDEO_URL]
 }
 
