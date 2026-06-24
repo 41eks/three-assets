@@ -143,3 +143,10 @@ function insertDynamicChild(parent: Node, childFn: Function, anchor: Node | null
     };
 }
 
+
+
+// src/h.ts 末尾添加
+export function render(element: Node | (() => Node), container: HTMLElement = document.body) {
+    const node = typeof element === 'function' ? element() : element;
+    container.appendChild(node);
+}

@@ -34,10 +34,10 @@ export function setLoadingPercent(p: number): void {
   loadingPercentState.set(p);
 }
 
-import { backBtn } from "../component/BackBtn.js";
+// import { BackBtn } from "../component/BackBtn.js";
 import { createHDRSwitch } from "../component/Switch.js";
-// 4. 将生成的 DOM 节点挂载到 body
-document.body.appendChild(backBtn);
+
+const backBtn = document.querySelector<HTMLAnchorElement>(".back-btn");
 
 // 5. 路由监听与显示逻辑 (与你原本的逻辑基本一致)
 function updateBackBtn() {

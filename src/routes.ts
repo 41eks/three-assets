@@ -17,6 +17,7 @@ export const routeConfig = [
     { hash: '#/penguin', label: 'penguin', page: () => import('./pages/penguin.ts') },
     { hash: '#/puff', label: '河豚', page: () => import('./pages/puff.ts') },
     { hash: '#/npr', label: 'NPR', page: () => import('./pages/npr/index.ts') },
+    { hash: '#/mix-and-match-pro', label: 'mix-and-match', page: () => import('./pages/mix-and-match-pro/index.ts') },
 ];
 import { routeMap } from './core/router.ts';
 

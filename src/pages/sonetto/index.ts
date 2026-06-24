@@ -24,7 +24,7 @@ video.loop = true;               // 循环播放
 video.muted = true;              // 静音（浏览器要求静音才能自动播放或代码控制播放）
 video.playsInline = true;        // 重要：保证在移动端也能内联播放，不会自动全屏
 video.style.display = "none";    // 隐藏元素
-video.preload = "auto"; 
+video.preload = "auto";
 
 // ✨ 新增：使用状态标记视频是否已经加载到足够播放的帧
 let isVideoReady = false;
@@ -64,7 +64,7 @@ const handlePlay = () => {
 };
 
 import { renderer } from '../../store/webgl.ts';
-
+import { frustumSize } from '../../core/camera.ts';
 
 import { activeCamera } from '../../core/camera.ts';
 import { hdrEnabled } from '../../core/scene.js';
@@ -75,7 +75,7 @@ function enter() {
     // 3. 计算立绘网格 (Plane) 应该缩放多大
     // 假设正交相机的高度域是 [-1, 1]（总高度2）
     // 我们想让立绘占满屏幕高度的 80% (0.8)
-    const targetHeight = 2 * 0.8;
+    const targetHeight = frustumSize * 0.8;
     const aspect = 940 / 1160;
     const targetWidth = targetHeight * aspect;
 
@@ -92,10 +92,10 @@ function enter() {
         canvas.style.backgroundSize = 'cover'; // 或者 'contain' 保持原比例不拉伸
         canvas.style.backgroundPosition = 'center center';
         canvas.style.backgroundRepeat = 'no-repeat';
-        
+
         // ✨ 新增核心：强制让 Three.js 背景清理为“完全透明”
         // 这样底层的 CSS 背景图片才能透过 Canvas 显现出来
-        renderer.setClearColor(0x000000, 0); 
+        renderer.setClearColor(0x000000, 0);
     }
     scene.add(plane);
     hdrEnabled.set(false);
@@ -126,13 +126,13 @@ function leave() {
     // fixRenderSize.set(false);
     // rendererSize.set({ w: window.innerWidth, h: window.innerHeight })
     activeCamera.set("default");
-   
+
     // 2. 清理工作
     if (renderer && renderer.domElement) {
         renderer.domElement.style.backgroundImage = 'none';
-        
+
         // ✨ 新增核心：离开时，恢复 Three.js 默认的背景清理颜色（通常是不透明黑 1.0）
-        renderer.setClearColor(0x000000, 1); 
+        renderer.setClearColor(0x000000, 1);
     }
 
     scene.remove(plane);
