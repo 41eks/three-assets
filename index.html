@@ -6,7 +6,7 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="preload" href="studio.hdr" as="fetch" crossorigin="anonymous" />
-   <link rel="stylesheet" href="/src/component/BackBtn.scss" />
+  <link rel="stylesheet" href="/src/component/BackBtn.scss" />
   <title>three assets</title>
 </head>
 
@@ -26,9 +26,20 @@
   </style>
   <div id="app"></div>
   <canvas id="webgl-canvas"></canvas>
-  
+
   <a href="#/" class="back-btn">← 首页</a>
   <script type="module" src="/src/main.js"></script>
+  <script>
+    const backBtn = document.querySelector('.back-btn')
+    const toggleBackBtn = () => {
+      backBtn.hidden =
+        location.hash === "" ||
+        location.hash === "#/";
+    }
+
+    addEventListener("hashchange", toggleBackBtn);
+    toggleBackBtn();
+  </script>
 </body>
 
 </html>

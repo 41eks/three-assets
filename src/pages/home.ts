@@ -2,11 +2,11 @@ import { routeConfig } from '../routes.js';
 import { hdrLoaded } from '../core/scene.js';
 import { createEffect } from '../core/solid.js';
 import { canvasVisible } from '../store/webgl.js';
+import './home.scss'
+const app = document.getElementById('app');
 export function enter() {
     canvasVisible.set(false);
     // document.querySelector('canvas')?.style.setProperty('display', 'none');
-
-    const app = document.getElementById('app');
     app.style.cssText = `
     position: fixed; inset: 0;
     display: flex; flex-direction: column;
@@ -17,18 +17,10 @@ export function enter() {
   `;
 
     const title = document.createElement('h1');
-    title.textContent = '目录';
-    title.style.cssText = `
-    color: #111; font-size: 2.5rem;
-    font-family: sans-serif; font-weight: 300;
-    letter-spacing: 0.3em; margin: 0;
-  `;
+    title.className = 'home-title';
 
     const grid = document.createElement('div');
-    grid.style.cssText = `
-    display: flex; flex-wrap: wrap;
-    gap: 20px; justify-content: center;
-  `;
+    grid.className = 'home-grid';
     const links: HTMLAnchorElement[] = [];
 
     routeConfig
@@ -37,47 +29,22 @@ export function enter() {
             const a = document.createElement('a');
             a.href = hash;
             a.textContent = label;
-            a.style.cssText = `
-        color: #111; font-size: 1.1rem;
-        font-family: sans-serif;
-        text-decoration: none;
-        padding: 20px 48px;
-        border: 1px solid rgba(0,0,0,0.2);
-        border-radius: 12px;
-        background: white;
-        transition: all 0.2s;
-        cursor: pointer;
-      `;
-            a.onmouseenter = () => {
-                a.style.background = '#111';
-                a.style.color = 'white';
-                a.style.transform = 'translateY(-2px)';
-            };
-            a.onmouseleave = () => {
-                a.style.background = 'white';
-                a.style.color = '#111';
-                a.style.transform = 'translateY(0)';
-            };
+            a.className = 'home-link';
             links.push(a);
             grid.appendChild(a);
         });
     // 根据 hdrLoaded 状态切换按钮可用性
     createEffect(() => {
         const loaded = hdrLoaded.get();
+
         links.forEach(a => {
-            const needsHdr = routeMap.get(a.getAttribute('href') ?? '')?.options?.hdr ?? false;
-            const ready = !needsHdr || loaded;
-            if (ready) {
-                delete a.dataset.disabled;
-                a.style.opacity = '1';
-                a.style.pointerEvents = 'auto';
-                a.style.cursor = 'pointer';
-            } else {
-                a.dataset.disabled = 'true';
-                a.style.opacity = '0.4';
-                a.style.pointerEvents = 'none';
-                a.style.cursor = 'not-allowed';
-            }
+            const needsHdr =
+                routeMap.get(a.getAttribute('href') ?? '')?.options?.hdr ?? false;
+
+            a.dataset.disabled =
+                !needsHdr || loaded
+                    ? ''
+                    : 'true';
         });
     });
 
@@ -88,7 +55,7 @@ export function enter() {
 export function leave() {
     canvasVisible.set(true);
     // document.querySelector('canvas')?.style.setProperty('display', 'block');
-    const app = document.getElementById('app');
+
     app.innerHTML = '';
     app.style.cssText = '';
 }

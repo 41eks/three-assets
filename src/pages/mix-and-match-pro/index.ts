@@ -81,6 +81,7 @@ function initSkeleton() {
 
     skeletonMesh.state.setAnimation(0, DEFAULT_ANIM, true);
     pageGroup.add(skeletonMesh);
+    pageGroup.position.y=-6
 
     console.log("✅ 骨骼 Mesh 已加入场景");
 }
@@ -89,12 +90,30 @@ function initSkeleton() {
 import { hdrEnabled } from '../../core/scene.js';
 import { scene } from '../../store/webgl.ts';
 
-import { middleTasks } from '../../core/scene.js';
+import { middleTasks, addTask } from '../../core/scene.js';
 import { activeCamera } from '../../core/camera.ts';
+const _task = (time) => {
+
+    // 等待资源加载完成
+    if (!assetManager.isLoadingComplete()) {
+        return;
+    }
+
+    // 首帧：初始化骨骼
+    if (!skeletonMesh) {
+        initSkeleton();
+        return;
+    }
+
+    skeletonMesh.update(time.dt);
+
+};
+let dispose: (() => void) | undefined;
 // ---------------------------------------------------------
 // 页面生命周期
 // ---------------------------------------------------------
 function enter() {
+    dispose?.(); // 防御性处理
     activeCamera.set("ortho");
     // 切换到适合查看 Spine 角色的相机（与 sonetto 保持一致）
     // activeCamera.set("default");
@@ -108,23 +127,7 @@ function enter() {
     }
 
     scene.add(pageGroup);
-    middleTasks.push((time) => {
-
-        // 等待资源加载完成
-        if (!assetManager.isLoadingComplete()) {
-            return;
-        }
-
-        // 首帧：初始化骨骼
-        if (!skeletonMesh) {
-            initSkeleton();
-            return;
-        }
-
-        skeletonMesh.update(time.dt);
-
-    })
-
+    dispose = addTask(_task);
 }
 
 function leave() {
@@ -135,7 +138,10 @@ function leave() {
     // 恢复全局状态
     activeCamera.set("default");
     hdrEnabled.set(true);
-    middleTasks.pop();
+    // middleTasks.pop();
+    // dispose();
+    dispose?.();
+    dispose = undefined;
 }
 
 // ---------------------------------------------------------
@@ -145,5 +151,8 @@ export default {
     enter,
     leave,
     assets: [] // Spine 文件由 assetManager 自行管理，无需路由器预加载
+    , options: {
+        hdr: false
+    }
 };
 

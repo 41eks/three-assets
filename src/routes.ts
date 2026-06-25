@@ -18,6 +18,8 @@ export const routeConfig = [
     { hash: '#/puff', label: '河豚', page: () => import('./pages/puff.ts') },
     { hash: '#/npr', label: 'NPR', page: () => import('./pages/npr/index.ts') },
     { hash: '#/mix-and-match-pro', label: 'mix-and-match', page: () => import('./pages/mix-and-match-pro/index.ts') },
+    { hash: '#/dissolve', label: 'dissolve', page: () => import('./pages/dissolve/index.ts') },
+    { hash: '#/wave', label: 'wave', page: () => import('./pages/wave/index.ts') },
 ];
 import { routeMap } from './core/router.ts';
 

@@ -1,33 +1,60 @@
+// .back-btn {
+//   position: fixed;
+//   top: 20px;
+//   left: 20px;
+
+//   /* 字体与排版 */
+//   color: white;
+//   font-weight: 700;
+//   font-size: 0.9rem;
+//   font-family: sans-serif;
+//   text-decoration: none;
+//   padding: 8px 16px;
+
+//   /* 圆角边框 (建议使用 white 配合 difference 效果最佳) */
+//   border: 2px solid white;
+//   border-radius: 8px;
+
+//   /* 混合模式：会同时作用于文字和边框 */
+//   mix-blend-mode: difference;
+
+//   /* 背景与图层 */
+//   background: transparent;
+//   z-index: 100;
+//   transition: all 0.2s;
+
+//   // display: none; // 如果需要默认隐藏，可以取消注释
+
+//   /* 鼠标悬停时的背景变化 */
+//   &:hover {
+//     background: #111;
+//   }
+// }
 
 .back-btn {
-position: fixed;
-top: 20px;
-left: 20px;
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 100;
 
-/* 字体与排版 */
-color: white;
-font-weight: 700;
-font-size: 0.9rem;
-font-family: sans-serif;
-text-decoration: none;
-padding: 8px 16px;
+  color: white;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
 
-/* 圆角边框 (建议使用 white 配合 difference 效果最佳) */
-border: 2px solid white; 
-border-radius: 8px;
+  padding: 8px 16px;
 
-/* 混合模式：会同时作用于文字和边框 */
-mix-blend-mode: difference;
+  border: 2px solid white;
+  border-radius: 8px;
 
-/* 背景与图层 */
-background: transparent;
-z-index: 100;
-transition: all 0.2s;
+  background: transparent;
+  mix-blend-mode: difference;
 
-// display: none; // 如果需要默认隐藏，可以取消注释
+  transition:
+    background-color 0.2s,
+    transform 0.2s;
 
-/* 鼠标悬停时的背景变化 */
-&:hover {
-  background: #111;
-}
+  &:hover {
+    background: #111;
+  }
 }

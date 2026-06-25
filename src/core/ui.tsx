@@ -37,17 +37,6 @@ export function setLoadingPercent(p: number): void {
 // import { BackBtn } from "../component/BackBtn.js";
 import { createHDRSwitch } from "../component/Switch.js";
 
-const backBtn = document.querySelector<HTMLAnchorElement>(".back-btn");
-
-// 5. 路由监听与显示逻辑 (与你原本的逻辑基本一致)
-function updateBackBtn() {
-  const isHome = location.hash === "#/" || location.hash === "";
-  backBtn.style.display = isHome ? "none" : "block";
-}
-
-window.addEventListener("hashchange", updateBackBtn);
-updateBackBtn();
-
 const hdrSwitch = createHDRSwitch();
 document.body.appendChild(hdrSwitch.element);
 
@@ -57,6 +46,7 @@ const noHDRSwitchRoutes = [
   "#/login",
   "#/roadscene",
   "#/sonetto",
+  "#/mix-and-match-pro",
 ];
 
 function updateHDRSwitch() {
