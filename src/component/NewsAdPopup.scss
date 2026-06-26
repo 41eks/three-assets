@@ -1,0 +1,68 @@
+.news-ad-popup {
+position: fixed;
+bottom: 20px;
+right: 20px; // 直接固定在最终位置
+width: 320px;
+background: #ffffff;
+border-radius: 8px;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+z-index: 9999;
+box-sizing: border-box;
+padding: 12px;
+
+/* 核心改动：初始状态向右平移 150%，隐藏在屏幕外 */
+transform: translateX(150%);
+
+/* 动画时间设为 1.5s，ease-out 效果是“起步快，最后慢慢停下”，很有质感 */
+transition: transform 1.5s ease-out; 
+
+&.show {
+  /* 触发显示时，平移回原位 */
+  transform: translateX(0); 
+}
+
+/* 下面的样式保持不变 */
+.close-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  color: #999;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+
+  &:hover {
+    color: #333;
+  }
+}
+
+.ad-content {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: #333;
+
+  img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.4;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+}
+}

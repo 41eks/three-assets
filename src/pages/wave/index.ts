@@ -2,7 +2,9 @@ import * as THREE from 'three';
 
 // pageGroup 作为本页所有对象的容器，方便一次性 add/remove
 const pageGroup = new THREE.Group();
+import vertexShader from './vert.glsl'
 
+import fragmentShader from './frag.glsl'
 // 调试辅助（开发期保留，生产可删除）
 const axesHelper = new THREE.AxesHelper(10);
 const gridHelper = new THREE.GridHelper(30, 30);
@@ -23,59 +25,9 @@ const material = new THREE.ShaderMaterial({
         waveTense: { value: 8.0 },
     },
 
-    vertexShader: `
-        varying vec2 vUv;
+    vertexShader,
 
-        void main() {
-            vUv = uv;
-            gl_Position = projectionMatrix *
-                         modelViewMatrix *
-                         vec4(position,1.0);
-        }
-    `,
-
-    fragmentShader: `
-        varying vec2 vUv;
-
-        uniform float time;
-        uniform float level;
-        uniform float waveScale;
-        uniform float waveSpeed;
-        uniform float waveTense;
-
-        void main() {
-
-            // 圆内的UV
-            vec2 uv = vUv;
-
-            // 波浪高度
-            float wave =
-                sin(
-                    (uv.x + time * waveSpeed)
-                    * waveTense
-                ) * waveScale
-                + level;
-
-            // 液体颜色
-            vec3 waterColor = vec3(
-                0.1,
-                0.5,
-                1.0
-            );
-
-            // 圆背景颜色
-            vec3 bgColor = vec3(
-                0.95
-            );
-
-            vec3 color =
-                uv.y < wave
-                ? waterColor
-                : bgColor;
-
-            gl_FragColor = vec4(color, 1.0);
-        }
-    `
+    fragmentShader
 });
 
 const circle = new THREE.Mesh(
@@ -87,15 +39,22 @@ pageGroup.add(circle)
 import { hdrEnabled } from '../../core/scene.js';
 import { scene } from '../../store/webgl.ts';
 
-import { middleTasks, addTask,type Updatable } from '../../core/scene.js';
+import { middleTasks, addTask, type Updatable } from '../../core/scene.js';
 import { activeCamera } from '../../core/camera.ts';
-const _task:Updatable = (time) => {
-  // 正常更新
-// skeletonMesh.update(delta);
-material.uniforms.time.value =time.elapsed
+const _task: Updatable = (time) => {
+    // 正常更新
+    // skeletonMesh.update(delta);
+    material.uniforms.time.value = time.elapsed
 
 };
 let dispose: (() => void) | undefined;
+
+const baseUrl = import.meta.env.VITE_BASE_URL;
+import { createNewsAdPopup } from '../../component/NewsAdPopup.tsx';
+// 记录计时器 ID，用于在 leave 时清理
+let showPopupTimer: number | null = null;
+
+
 // ---------------------------------------------------------
 // 页面生命周期
 // ---------------------------------------------------------
@@ -108,9 +67,16 @@ function enter() {
 
     scene.add(pageGroup);
     dispose = addTask(_task);
+
 }
 
 function leave() {
+    // --- 新增逻辑：清理计时器并立即隐藏 ---
+    if (showPopupTimer) {
+        clearTimeout(showPopupTimer);
+        showPopupTimer = null;
+    }
+
 
     // 从场景移除本页所有对象
     scene.remove(pageGroup);
@@ -133,6 +99,12 @@ export default {
     assets: [] // Spine 文件由 assetManager 自行管理，无需路由器预加载
     , options: {
         hdr: false
-    }
+    }, popups: [{
+        imgSrc: `${baseUrl}refer/a563c0a97660262d0f95d3b2448f53d246359050.jpg@256w_144h_1c.avif`,
+        text: '一个波浪效果，所以说能用shader解决的不要自己瞎搞',
+        link: 'https://www.bilibili.com/video/BV1a66JYUEkC/',
+        delay: 2000,      // 2秒后显示
+        duration: 10000   // 10秒后消失
+    }]
 };
 

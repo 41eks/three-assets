@@ -66,6 +66,9 @@ const loadModel = (): Promise<THREE.Group> => {
 };
 import { addTask } from '../../core/scene.js';
 const pageBase = createPage(loadModel);
+
+const baseUrl = import.meta.env.VITE_BASE_URL;
+
 export default {
     ...pageBase,
     assets: [], // 手动声明 assets
@@ -78,6 +81,12 @@ export default {
         pageBase.leave();
         dispose?.();
         dispose = undefined;
-    }
+    }, popups: [{
+        imgSrc: `${baseUrl}refer/5d8eec434e73cbdc2631ce168d21637f7d33359c.jpg@672w_378h_1c.webp`,
+        text: 'Godot 像素化消散shader',
+        link: 'https://www.bilibili.com/video/BV1m24y1u7vL/',
+        delay: 2000,      // 2秒后显示
+        duration: 10000   // 10秒后消失
+    }]
 };
 

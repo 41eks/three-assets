@@ -1,14 +1,16 @@
 // import { routeOptionMap } from "../main";
 import type { Page } from "../types/router";
 export const routeMap = new Map<string, Page>();
-
+import { createNewsAdPopup } from "../component/NewsAdPopup";
 export function startRouter() {
   window.addEventListener('hashchange', () => navigate(location.hash));
   navigate(location.hash || '#/');
 }
 let currentRoute = null;
 
-
+// 用于存储当前显示的弹窗实例
+let currentPopup: { element: HTMLElement, hide: () => void } | null = null;
+let popupTimer: number | null = null;
 // 建议使用 Map 来存储键值对：URI -> ArrayBuffer
 export const assetsCache = new Map<string, ArrayBuffer>();
 
@@ -23,11 +25,36 @@ function navigate(hash: string) {
   if (currentRoute?.leave) {
     currentRoute.leave();
   }
-
+  // 清理旧弹窗逻辑
+  if (popupTimer) clearTimeout(popupTimer);
+  if (currentPopup) {
+    currentPopup.hide();
+    if (currentPopup.element.parentElement) {
+      currentPopup.element.remove();
+    }
+    currentPopup = null;
+  }
   // 定义进入新页面的逻辑
   const enterNextPage = () => {
     next.enter();
     currentRoute = next;
+    // --- 3. 新增：处理新页面的第一个弹窗 ---
+    if (next.popups && next.popups.length > 0) {
+      const config = next.popups[0];
+      const delay = config.delay ?? 2000;
+
+      popupTimer = window.setTimeout(() => {
+        const pop = createNewsAdPopup(
+          config.imgSrc,
+          config.text,
+          config.link,
+          config.duration ?? 10000
+        );
+        document.body.appendChild(pop.element);
+        pop.show();
+        currentPopup = pop;
+      }, delay);
+    }
   };
 
   // 判断并加载 assets

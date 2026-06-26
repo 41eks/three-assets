@@ -20,6 +20,7 @@ export const routeConfig = [
     { hash: '#/mix-and-match-pro', label: 'mix-and-match', page: () => import('./pages/mix-and-match-pro/index.ts') },
     { hash: '#/dissolve', label: 'dissolve', page: () => import('./pages/dissolve/index.ts') },
     { hash: '#/wave', label: 'wave', page: () => import('./pages/wave/index.ts') },
+    { hash: '#/ikeye', label: 'ikeye', page: () => import('./pages/ikeye/index.ts') },
 ];
 import { routeMap } from './core/router.ts';
 
