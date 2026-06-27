@@ -9,11 +9,20 @@ import { createWait } from '../../utils/waitSpineReady.ts';
 
 const baseUrl = import.meta.env.VITE_BASE_URL;
 
+
+
 const SPINE_BASE_URL = `${baseUrl}spine-assets/`;
 const SKEL_FILE = "mix-and-match-pro.skel";
 const ATLAS_FILE = "mix-and-match-pro.atlas";
 const DEFAULT_SKIN = "full-skins/girl";
 const DEFAULT_ANIM = "walk";
+
+const link = document.createElement('link');
+link.rel = 'preload';
+link.as = 'image';
+link.href = `${SPINE_BASE_URL}mix-and-match-pro.png`;
+link.crossOrigin = 'anonymous';  // ← 加这行
+document.head.appendChild(link);
 
 const pageGroup = new THREE.Group();
 const axesHelper = new THREE.AxesHelper(10);
@@ -97,6 +106,6 @@ function leave() {
 export default {
     enter,
     leave,
-    assets: [createWait(assetManager, parseAssets, postParse, { skel: SKEL_FILE, atlas: ATLAS_FILE })],
+    assets: [createWait(assetManager, parseAssets, postParse, { skel: SKEL_FILE, atlas: ATLAS_FILE, png: `${SPINE_BASE_URL}mix-and-match-pro.png` })],
     options: { hdr: false }
 };

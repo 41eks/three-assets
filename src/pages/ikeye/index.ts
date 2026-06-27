@@ -160,7 +160,7 @@ function leave() {
 export default {
     enter,
     leave,
-    assets: [createWait(assetManager, parseAssets, postParse, { skel: SKEL_FILE, atlas: ATLAS_FILE })],
+    assets: [createWait(assetManager, parseAssets, postParse, { skel: SKEL_FILE, atlas: ATLAS_FILE, png: `${SPINE_BASE_URL}skeleton.png` })],
     options: {
         hdr: false
     }, popups: [
