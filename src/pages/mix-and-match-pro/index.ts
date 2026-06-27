@@ -73,16 +73,20 @@ const postParse = (mesh: spine.threejs.SkeletonMesh) => {
 };
 
 const _task = (time: { dt: number }) => {
+    if (!skeletonMesh) return;
     skeletonMesh.update(time.dt);
 };
 
 function enter() {
     activeCamera.set("ortho");
     hdrEnabled.set(false);
-    scene.add(pageGroup);
+    // scene.add(pageGroup);
+    if (!pageGroup.parent) scene.add(pageGroup);
+    if (skeletonMesh) dispose = addTask(_task);  // ← 第二次起在这里注册
 }
 
 function leave() {
+    console.log('leave mix-and-match-pro');  // ← 加这行
     scene.remove(pageGroup);
     activeCamera.set("default");
     hdrEnabled.set(true);

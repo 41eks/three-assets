@@ -98,6 +98,7 @@ const parseAssets = () => {
 // 每帧任务
 // ---------------------------------------------------------
 const _task = (_time: { dt: number }) => {
+    if (!skeletonMesh) return;
     // ✅ 先更新动画
     skeletonMesh.update(_time.dt);
 

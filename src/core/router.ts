@@ -30,6 +30,7 @@ function navigate(hash: string) {
     setCameraPosition();
 
   }
+  currentRoute = next;
   // 清理旧弹窗逻辑
   if (popupTimer) clearTimeout(popupTimer);
   if (currentPopup) {
@@ -42,7 +43,7 @@ function navigate(hash: string) {
   // 定义进入新页面的逻辑
   const enterNextPage = () => {
     next.enter();
-    currentRoute = next;
+    
     // --- 3. 新增：处理新页面的第一个弹窗 ---
     if (next.popups && next.popups.length > 0) {
       const config = next.popups[0];
