@@ -8,6 +8,8 @@ export function startRouter() {
 }
 let currentRoute = null;
 
+import { controls } from "./scene";
+import { setCameraPosition } from "./camera";
 // 用于存储当前显示的弹窗实例
 let currentPopup: { element: HTMLElement, hide: () => void } | null = null;
 let popupTimer: number | null = null;
@@ -24,6 +26,9 @@ function navigate(hash: string) {
   // 离开当前页
   if (currentRoute?.leave) {
     currentRoute.leave();
+    controls.enabled = true
+    setCameraPosition();
+
   }
   // 清理旧弹窗逻辑
   if (popupTimer) clearTimeout(popupTimer);
@@ -65,49 +70,37 @@ function navigate(hash: string) {
     // 没有 assets 需要下载，直接同步进入新页
     enterNextPage();
   }
+  if (next.controls === false) {
+    controls.enabled = false;
+  }
 }
+import type { AssetEntry } from "../types/router";
 
+function loadAssets(assets: AssetEntry[], onComplete: () => void) {
+  const missingUris = assets
+    .filter((a): a is string => typeof a === 'string' && !assetsCache.has(a));
 
+  const fnPromises = assets
+    .filter((a): a is () => Promise<any> => typeof a === 'function')
+    .map(fn => fn());
 
-// 假设 assetsCache 已经在外部定义
-// export const assetsCache = new Map<string, ArrayBuffer>();
+  const uriPromises = missingUris.map(uri =>
+    fetch(uri)
+      .then(res => {
+        if (!res.ok) throw new Error(`Failed to fetch ${uri}: ${res.statusText}`);
+        return res.arrayBuffer();
+      })
+      .then(buffer => { assetsCache.set(uri, buffer); })
+  );
 
-/**
- * 资源加载函数
- * @param assets 资源 URI 列表
- * @param onComplete 全部加载完成（或全部已缓存）时执行的回调
- */
-function loadAssets(assets: string[], onComplete: () => void) {
-  // 1. 过滤出还未被缓存的资源
-  const missingAssets = assets.filter(uri => !assetsCache.has(uri));
+  const allPromises = [...uriPromises, ...fnPromises];
 
-  // 2. 关键点：如果没有缺失的资源（全部已加载），直接同步执行回调！没有异步等待过程。
-  if (missingAssets.length === 0) {
+  if (allPromises.length === 0) {
     onComplete();
     return;
   }
 
-  // 3. 有未缓存的资源，构建真正的网络请求 Promise 数组
-  const downloadPromises = missingAssets.map(uri => {
-    return fetch(uri)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`Failed to fetch ${uri}: ${response.statusText}`);
-        }
-        return response.arrayBuffer();
-      })
-      .then(buffer => {
-        assetsCache.set(uri, buffer); // 存入缓存
-      });
-  });
-
-  // 4. 异步等待缺失资源的下载
-  Promise.all(downloadPromises)
-    .then(() => {
-      onComplete();
-    })
-    .catch(error => {
-      console.error("加载 assets 失败:", error);
-      // 这里可以根据需求决定是否要在报错时继续执行 onComplete()
-    });
+  Promise.all(allPromises)
+    .then(() => onComplete())
+    .catch(error => { console.error("加载 assets 失败:", error); });
 }

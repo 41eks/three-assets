@@ -6,7 +6,7 @@ import { rendererSize } from '../store/viewport';
 export const activeCamera = createState('default');
 
 const defaultCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-defaultCamera.position.set(0, 0.5, 3);
+
 const aspect = window.innerWidth / window.innerHeight;
 export const frustumSize = 16;
 // (别忘了上一次修复的远端裁切面 100)
@@ -19,7 +19,14 @@ const orthoCamera = new THREE.OrthographicCamera(
      1000                      // far   (远裁剪面)
 );
 // new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 100);
+
+
+
+export function setCameraPosition(){
+defaultCamera.position.set(0, 0.5, 3);
 orthoCamera.position.set(0, 0, 20);
+}
+setCameraPosition();
 
 // ✨ 核心改造：使用 createMemo 创建响应式的派生状态
 // 它返回的是一个函数（底层 memoState.get），每次调用拿到的都是最新的正确相机

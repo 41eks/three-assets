@@ -11,9 +11,9 @@ const baseUrl = import.meta.env.VITE_BASE_URL;
 // 模块级常量
 // ---------------------------------------------------------
 const SPINE_BASE_URL = `${baseUrl}spine-assets/eye/`;
-const SKEL_FILE     = "skeleton.skel";
-const ATLAS_FILE    = "skeleton.atlas";
-const DEFAULT_ANIM  = "target"; // 改成你 eye 模型实际有的动画名
+const SKEL_FILE = "skeleton.skel";
+const ATLAS_FILE = "skeleton.atlas";
+const DEFAULT_ANIM = "target"; // 改成你 eye 模型实际有的动画名
 
 // ---------------------------------------------------------
 // 场景容器
@@ -27,19 +27,10 @@ gridHelper.rotation.x = Math.PI / 2;
 pageGroup.add(axesHelper);
 pageGroup.add(gridHelper);
 
-// ---------------------------------------------------------
-// Spine 资源管理器（模块级单例）
-// ---------------------------------------------------------
-const assetManager = new spine.threejs.AssetManager(SPINE_BASE_URL);
-assetManager.loadBinary(SKEL_FILE);
-assetManager.loadTextureAtlas(ATLAS_FILE);
 
-// ---------------------------------------------------------
-// 模块级状态（延迟初始化）
-// ---------------------------------------------------------
-let skeletonMesh: any   = null;
-let targetBone: any     = null;   // 需要控制的骨骼
-let assetsQueued        = false;  // 防止重复排队
+let skeletonMesh: any = null;
+let targetBone: any = null;   // 需要控制的骨骼
+// let assetsQueued = false;  // 防止重复排队
 
 // 鼠标/目标位置（Spine 局部坐标）
 const pointerTarget = new THREE.Vector2(0, 0);
@@ -49,7 +40,7 @@ const pointerTarget = new THREE.Vector2(0, 0);
 // ---------------------------------------------------------
 function onPointerMove(e: PointerEvent) {
     // 归一化到 [-1, 1]
-    const nx = (e.clientX / window.innerWidth)  * 2 - 1;
+    const nx = (e.clientX / window.innerWidth) * 2 - 1;
     const ny = (e.clientY / window.innerHeight) * 2 - 1;
 
     // Spine 模型缩放 0.01，原始约 1200px 宽 → 约 12 单位
@@ -57,72 +48,56 @@ function onPointerMove(e: PointerEvent) {
     pointerTarget.set(nx * 6, -ny * 6);
 }
 
-// ---------------------------------------------------------
-// 初始化骨骼 Mesh（仅在资源就绪后调用一次）
-// ---------------------------------------------------------
-function initSkeleton() {
-    const atlas       = assetManager.get(ATLAS_FILE);
 
-    // ✅ 打印 atlas 加载的所有 region 名称
+const assetManager = new spine.threejs.AssetManager(SPINE_BASE_URL);
+
+const parseAssets = () => {
+    const atlas = assetManager.get(ATLAS_FILE);
     console.log("📦 Atlas pages:", atlas.pages.map((p: any) => p.name));
     console.log("📦 Atlas regions:", atlas.regions.map((r: any) => r.name));
+
     const atlasLoader = new spine.AtlasAttachmentLoader(atlas);
-    const binary      = new spine.SkeletonBinary(atlasLoader);
-    binary.scale      = 0.01;
+    const binary = new spine.SkeletonBinary(atlasLoader);
+    binary.scale = 0.01;
 
     const skeletonData = binary.readSkeletonData(assetManager.get(SKEL_FILE));
     console.log("💀 骨骼数据加载成功！");
     console.log("🦴 可用骨骼:", skeletonData.bones.map((b: any) => b.name));
     console.log("🎬 可用动画:", skeletonData.animations.map((a: any) => a.name));
 
-    skeletonMesh = new spine.threejs.SkeletonMesh(skeletonData, (params: any) => {
-        params.depthTest  = false;
-        params.alphaTest  = 0.001;
+    const mesh = new spine.threejs.SkeletonMesh(skeletonData, (params: any) => {
+        params.depthTest = false;
+        params.alphaTest = 0.001;
     });
 
-    // 播放默认动画（循环）
     const availableAnims: string[] = skeletonData.animations.map((a: any) => a.name);
     const animToPlay = availableAnims.includes(DEFAULT_ANIM)
         ? DEFAULT_ANIM
         : availableAnims[0];
 
     if (animToPlay) {
-        skeletonMesh.state.setAnimation(0, animToPlay, true);
+        mesh.state.setAnimation(0, animToPlay, true);
         console.log(`🎬 播放动画: [${animToPlay}]`);
     } else {
         console.warn("⚠️ 没有可用动画");
     }
 
-    // ✅ 在 skeleton 就绪后获取骨骼
-    targetBone = skeletonMesh.skeleton.findBone('target');
+    targetBone = mesh.skeleton.findBone('target');
     if (targetBone) {
         console.log("🎯 找到 target 骨骼:", targetBone.data.name);
     } else {
         console.warn(
             "⚠️ 未找到名为 'target' 的骨骼，可用骨骼：",
-            skeletonMesh.skeleton.bones.map((b: any) => b.data.name)
+            mesh.skeleton.bones.map((b: any) => b.data.name)
         );
     }
-
-    pageGroup.add(skeletonMesh);
-    pageGroup.position.y = 0;
-
-    console.log("✅ 骨骼 Mesh 已加入场景");
-}
+    return mesh as unknown as THREE.Object3D;
+};
 
 // ---------------------------------------------------------
 // 每帧任务
 // ---------------------------------------------------------
 const _task = (_time: { dt: number }) => {
-    // 等待资源加载完成
-    if (!assetManager.isLoadingComplete()) return;
-
-    // 首帧：初始化骨骼
-    if (!skeletonMesh) {
-        initSkeleton();
-        return;
-    }
-
     // ✅ 先更新动画
     skeletonMesh.update(_time.dt);
 
@@ -138,27 +113,32 @@ const _task = (_time: { dt: number }) => {
 // dispose 句柄
 // ---------------------------------------------------------
 let dispose: (() => void) | undefined;
+const postParse = (mesh: THREE.Object3D) => {
+    pageGroup.add(mesh);
+    pageGroup.position.y = 0;
+    console.log("✅ 骨骼 Mesh 已加入场景");
+    skeletonMesh = mesh;
+    dispose = addTask(_task);
+}
+import { createWait } from '../../utils/waitSpineReady.ts';
+
+
 
 // ---------------------------------------------------------
 // 页面生命周期
 // ---------------------------------------------------------
 function enter() {
-    dispose?.();
 
     activeCamera.set("ortho");
     hdrEnabled.set(false);
 
-    // 排队加载（防止重复）
-    if (!assetsQueued) {
-        assetManager.loadBinary(SKEL_FILE);
-        assetManager.loadTextureAtlas(ATLAS_FILE);
-        assetsQueued = true;
-    }
+
 
     window.addEventListener('pointermove', onPointerMove);
 
     scene.add(pageGroup);
-    dispose = addTask(_task);
+    console.log(scene)
+
 }
 
 function leave() {
@@ -179,8 +159,17 @@ function leave() {
 export default {
     enter,
     leave,
-    assets: [],
+    assets: [createWait(assetManager, parseAssets, postParse, { skel: SKEL_FILE, atlas: ATLAS_FILE })],
     options: {
         hdr: false
-    }
+    }, popups: [
+        {
+
+            imgSrc: `https://zh.esotericsoftware.com/img/blog/eye-limit/eye-blog.gif`,
+            text: 'Distance-limit-setup-for-eyes',
+            link: 'https://zh.esotericsoftware.com/blog/Distance-limit-setup-for-eyes',
+            delay: 2000,      // 2秒后显示
+            duration: 10000   // 10秒后消失
+        }
+    ], controls: false
 };

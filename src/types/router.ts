@@ -16,6 +16,9 @@ export interface Page {
     leave: () => void;
     options?: SceneOptions;
     //uri assets before enter;
-    assets?: string[]
+    assets?: AssetEntry[];
     popups?: PopupConfig[]; // 新增：弹窗列表
+    controls?: boolean
 }
+
+export type AssetEntry = string | (() => Promise<any>);
