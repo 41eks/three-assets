@@ -1,11 +1,8 @@
 
-import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 
 
 
 import { GLTFLoader, type GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { setLoadingState, setLoadingPercent } from '../core/ui.js';
-import * as THREE from 'three';  // ← 加这行
 
 import { assetsCache } from '../core/router.ts';
 import { createPage } from '../core/createPage.js';

@@ -12,7 +12,7 @@ export const routeConfig = [
     { hash: '#/orange', label: '橘子', page: () => import('./pages/orange.ts') },
     { hash: '#/roadscene', label: 'roadscene', page: () => import('./pages/road/index.ts') },
     { hash: '#/appear', label: 'appear', page: () => import('./pages/appeareffect/index.ts') },
-    { hash: '#/tartv2', label: '蛋挞', page: () => import('./pages/tartv2.ts') },
+    { hash: '#/tartv2', label: '蛋挞', page: () => import('./pages/tart.ts') },
     { hash: '#/sonetto', label: 'sonetto', page: () => import('./pages/sonetto/index.ts') },
     { hash: '#/penguin', label: 'penguin', page: () => import('./pages/penguin.ts') },
     { hash: '#/puff', label: '河豚', page: () => import('./pages/puff.ts') },
@@ -21,6 +21,7 @@ export const routeConfig = [
     { hash: '#/dissolve', label: 'dissolve', page: () => import('./pages/dissolve/index.ts') },
     { hash: '#/wave', label: 'wave', page: () => import('./pages/wave/index.ts') },
     { hash: '#/ikeye', label: 'ikeye', page: () => import('./pages/ikeye/index.ts') },
+    { hash: '#/icecream', label: 'icecream', page: () => import('./pages/icecream.ts') },
 ];
 import { routeMap } from './core/router.ts';
 
