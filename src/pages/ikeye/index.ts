@@ -119,7 +119,6 @@ const postParse = (mesh: THREE.Object3D) => {
     pageGroup.position.y = 0;
     console.log("✅ 骨骼 Mesh 已加入场景");
     skeletonMesh = mesh;
-    dispose = addTask(_task);
 }
 import { createWait } from '../../utils/waitSpineReady.ts';
 
@@ -133,11 +132,10 @@ function enter() {
     activeCamera.set("ortho");
     hdrEnabled.set(false);
 
-
-
     window.addEventListener('pointermove', onPointerMove);
 
-    scene.add(pageGroup);
+    if (!pageGroup.parent) scene.add(pageGroup);
+    if (skeletonMesh && !dispose) dispose = addTask(_task);
     console.log(scene)
 
 }

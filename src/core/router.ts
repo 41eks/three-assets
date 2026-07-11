@@ -2,6 +2,9 @@
 import type { Page } from "../types/router";
 export const routeMap = new Map<string, Page>();
 import { createNewsAdPopup } from "../component/NewsAdPopup";
+import { loadAssets, assetsCache } from "./assets";
+import { setLoadingState } from "./loading";
+export { assetsCache };
 export function startRouter() {
   window.addEventListener('hashchange', () => navigate(location.hash));
   navigate(location.hash || '#/');
@@ -13,8 +16,6 @@ import { setCameraPosition } from "./camera";
 // 用于存储当前显示的弹窗实例
 let currentPopup: { element: HTMLElement, hide: () => void } | null = null;
 let popupTimer: number | null = null;
-// 建议使用 Map 来存储键值对：URI -> ArrayBuffer
-export const assetsCache = new Map<string, ArrayBuffer>();
 
 // (前面的接口和 Map 定义保持不变)
 
@@ -65,8 +66,16 @@ function navigate(hash: string) {
 
   // 判断并加载 assets
   if (next.assets && next.assets.length > 0) {
-    // 调用我们封装好的函数
-    loadAssets(next.assets, enterNextPage);
+    setLoadingState(true);
+    loadAssets(next.assets)
+      .then(() => {
+        setLoadingState(false);
+        enterNextPage();
+      })
+      .catch(error => {
+        setLoadingState(false);
+        console.error("加载 assets 失败:", error);
+      });
   } else {
     // 没有 assets 需要下载，直接同步进入新页
     enterNextPage();
@@ -74,34 +83,4 @@ function navigate(hash: string) {
   if (next.controls === false) {
     controls.enabled = false;
   }
-}
-import type { AssetEntry } from "../types/router";
-
-function loadAssets(assets: AssetEntry[], onComplete: () => void) {
-  const missingUris = assets
-    .filter((a): a is string => typeof a === 'string' && !assetsCache.has(a));
-
-  const fnPromises = assets
-    .filter((a): a is () => Promise<any> => typeof a === 'function')
-    .map(fn => fn());
-
-  const uriPromises = missingUris.map(uri =>
-    fetch(uri)
-      .then(res => {
-        if (!res.ok) throw new Error(`Failed to fetch ${uri}: ${res.statusText}`);
-        return res.arrayBuffer();
-      })
-      .then(buffer => { assetsCache.set(uri, buffer); })
-  );
-
-  const allPromises = [...uriPromises, ...fnPromises];
-
-  if (allPromises.length === 0) {
-    onComplete();
-    return;
-  }
-
-  Promise.all(allPromises)
-    .then(() => onComplete())
-    .catch(error => { console.error("加载 assets 失败:", error); });
 }

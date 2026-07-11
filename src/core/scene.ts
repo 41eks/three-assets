@@ -9,6 +9,7 @@ import { rendererSize } from '../store/viewport';
 import { scene, renderer } from '../store/webgl';
 import { getCamera, activeCamera } from './camera';
 import { composer } from './composer'; // 因为不再有循环依赖，直接导入即可
+import { setLoadingState } from './loading';
 // 1. 先初始化核心 WebGL 场景和渲染器
 // export const scene = new THREE.Scene();
 
@@ -78,7 +79,8 @@ export const hdrLoaded = createState(false);
 export const hdrEnabled = createState(true);
 
 export function initScene(): Promise<void> {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
+        setLoadingState(true);
         const pmrem = new THREE.PMREMGenerator(renderer);
         pmrem.compileEquirectangularShader();
 
@@ -97,6 +99,8 @@ export function initScene(): Promise<void> {
                 reject(error);
             }
         );
+    }).then(() => {
+        setLoadingState(false);
     });
 }
 

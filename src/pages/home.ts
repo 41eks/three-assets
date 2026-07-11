@@ -1,9 +1,13 @@
-import { routeConfig } from '../routes.js';
+import { routeConfig, type RouteTab } from '../routes.js';
 import { hdrLoaded } from '../core/scene.js';
 import { createEffect } from '../core/solid.js';
 import { canvasVisible } from '../store/webgl.js';
+import { activeHomeTab } from '../store/tab.js';
 import './home.scss'
 const app = document.getElementById('app');
+
+const tabs: RouteTab[] = ['home', '3d', '2d', 'shader'];
+
 export function enter() {
     canvasVisible.set(false);
     // document.querySelector('canvas')?.style.setProperty('display', 'none');
@@ -19,22 +23,14 @@ export function enter() {
     const title = document.createElement('h1');
     title.className = 'home-title';
 
+    const tabBar = document.createElement('div');
+    tabBar.className = 'home-tabs';
+
     const grid = document.createElement('div');
     grid.className = 'home-grid';
     const links: HTMLAnchorElement[] = [];
 
-    routeConfig
-        .filter(({ hash }) => hash !== '#/')
-        .forEach(({ hash, label }) => {
-            const a = document.createElement('a');
-            a.href = hash;
-            a.textContent = label;
-            a.className = 'home-link';
-            links.push(a);
-            grid.appendChild(a);
-        });
-    // 根据 hdrLoaded 状态切换按钮可用性
-    createEffect(() => {
+    function updateDisabledState() {
         const loaded = hdrLoaded.get();
 
         links.forEach(a => {
@@ -46,9 +42,56 @@ export function enter() {
                     ? ''
                     : 'true';
         });
+    }
+
+    function renderGrid() {
+        links.length = 0;
+        grid.innerHTML = '';
+        const activeTab = activeHomeTab.get();
+
+        routeConfig
+            .filter(({ hash, label }) => hash !== '#/' && label[activeTab])
+            .forEach(({ hash, label }) => {
+                const a = document.createElement('a');
+                a.href = hash;
+                a.textContent = label[activeTab] ?? '';
+                a.className = 'home-link';
+                links.push(a);
+                grid.appendChild(a);
+            });
+
+        updateDisabledState();
+    }
+
+    function renderTabs() {
+        tabBar.innerHTML = '';
+        const activeTab = activeHomeTab.get();
+
+        tabs.forEach(tab => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.textContent = tab;
+            button.className = 'home-tab';
+            button.dataset.active = tab === activeTab ? 'true' : '';
+            button.addEventListener('click', () => {
+                activeHomeTab.set(tab);
+                renderTabs();
+                renderGrid();
+            });
+            tabBar.appendChild(button);
+        });
+    }
+
+    // 根据 hdrLoaded 状态切换按钮可用性
+    createEffect(() => {
+        updateDisabledState();
     });
 
+    renderTabs();
+    renderGrid();
+
     app.appendChild(title);
+    app.appendChild(tabBar);
     app.appendChild(grid);
 }
 

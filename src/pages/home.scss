@@ -22,6 +22,38 @@ font-weight: 300;
 letter-spacing: 0.3em;
 }
 
+.home-tabs {
+display: flex;
+gap: 8px;
+padding: 4px;
+border: 1px solid rgba(0, 0, 0, 0.12);
+border-radius: 999px;
+background: #fff;
+}
+
+.home-tab {
+min-width: 72px;
+height: 36px;
+padding: 0 18px;
+border: 0;
+border-radius: 999px;
+background: transparent;
+color: #333;
+font: inherit;
+font-size: 0.95rem;
+cursor: pointer;
+transition: background 0.2s, color 0.2s;
+
+&:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+&[data-active='true'] {
+  background: #111;
+  color: white;
+}
+}
+
 .home-grid {
 display: flex;
 flex-wrap: wrap;

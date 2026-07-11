@@ -2,26 +2,27 @@
 import type { Page } from './types/router.ts';
 // ✅ 新增模型只改这里
 
+export type RouteTab = 'home' | '3d' | '2d' | 'shader';
+export type RouteLabel = Partial<Record<RouteTab, string>>;
+
 export const routeConfig = [
-    // { hash: '#/', label: 'Home', page: () => import('./pages/home.js') },
-    { hash: '#/blueberry', label: '蓝莓', page: () => import('./pages/blueberry.ts') },
-    // { hash: '#/npr', label: 'NPR', page: () => import('./pages/npr.ts') },
-    // { hash: '#/tart', label: '蛋挞', page: () => import('./pages/tart.ts') },
-    { hash: '#/peach', label: '桃子', page: () => import('./pages/momo.ts') },
-    { hash: '#/pudding', label: '布丁', page: () => import('./pages/pudding.ts') },
-    { hash: '#/orange', label: '橘子', page: () => import('./pages/orange.ts') },
-    { hash: '#/roadscene', label: 'roadscene', page: () => import('./pages/road/index.ts') },
-    { hash: '#/appear', label: 'appear', page: () => import('./pages/appeareffect/index.ts') },
-    { hash: '#/tartv2', label: '蛋挞', page: () => import('./pages/tart.ts') },
-    { hash: '#/sonetto', label: 'sonetto', page: () => import('./pages/sonetto/index.ts') },
-    { hash: '#/penguin', label: 'penguin', page: () => import('./pages/penguin.ts') },
-    { hash: '#/puff', label: '河豚', page: () => import('./pages/puff.ts') },
-    { hash: '#/npr', label: 'NPR', page: () => import('./pages/npr/index.ts') },
-    { hash: '#/mix-and-match-pro', label: 'mix-and-match', page: () => import('./pages/mix-and-match-pro/index.ts') },
-    { hash: '#/dissolve', label: 'dissolve', page: () => import('./pages/dissolve/index.ts') },
-    { hash: '#/wave', label: 'wave', page: () => import('./pages/wave/index.ts') },
-    { hash: '#/ikeye', label: 'ikeye', page: () => import('./pages/ikeye/index.ts') },
-    { hash: '#/icecream', label: 'icecream', page: () => import('./pages/icecream.ts') },
+    { hash: '#/blueberry', label: { home: '蓝莓', '3d': '蓝莓' }, page: () => import('./pages/blueberry.ts') },
+    { hash: '#/peach', label: { home: '桃子', '3d': '桃子' }, page: () => import('./pages/momo.ts') },
+    { hash: '#/pudding', label: { home: '布丁', '3d': '布丁' }, page: () => import('./pages/pudding.ts') },
+    { hash: '#/orange', label: { home: '橘子', '3d': '橘子' }, page: () => import('./pages/orange.ts') },
+    { hash: '#/roadscene', label: { home: 'roadscene', '3d': 'roadscene' }, page: () => import('./pages/road/index.ts') },
+    { hash: '#/appear', label: { home: 'appear', shader: 'appear' }, page: () => import('./pages/appeareffect/index.ts') },
+    { hash: '#/tartv2', label: { home: '蛋挞', '3d': '蛋挞' }, page: () => import('./pages/tart.ts') },
+    { hash: '#/sonetto', label: { home: 'sonetto', '2d': 'sonetto' }, page: () => import('./pages/sonetto/index.ts') },
+    { hash: '#/penguin', label: { home: 'penguin', '3d': 'penguin' }, page: () => import('./pages/penguin.ts') },
+    { hash: '#/puff', label: { home: '河豚', '3d': '河豚' }, page: () => import('./pages/puff.ts') },
+    { hash: '#/npr', label: { home: 'NPR', shader: 'NPR' }, page: () => import('./pages/npr/index.ts') },
+    { hash: '#/mix-and-match-pro', label: { home: 'mix-and-match', '2d': 'mix-and-match' }, page: () => import('./pages/mix-and-match-pro/index.ts') },
+    { hash: '#/dissolve', label: { home: 'dissolve', shader: 'dissolve' }, page: () => import('./pages/dissolve/index.ts') },
+    { hash: '#/wave', label: { home: 'wave', shader: 'wave' }, page: () => import('./pages/wave/index.ts') },
+    { hash: '#/ikeye', label: { home: 'ikeye', '2d': 'ikeye' }, page: () => import('./pages/ikeye/index.ts') },
+    { hash: '#/icecream', label: { home: '冰淇淋', '3d': '冰淇淋' }, page: () => import('./pages/icecream.ts') },
+    { hash: '#/airscrew', label: { home: '螺旋桨', '3d': '螺旋桨' }, page: () => import('./pages/airscrew.ts') },
 ];
 import { routeMap } from './core/router.ts';
 
