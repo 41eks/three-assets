@@ -1,4 +1,3 @@
-import { createState } from "../core/solid.js";
 import "./NewsAdPopup.scss";
 
 export function createNewsAdPopup(
@@ -7,7 +6,6 @@ export function createNewsAdPopup(
   linkUrl: string,
   duration: number = 5000, 
 ) {
-  const visibleState = createState(false);
   let autoCloseTimer: number | null = null;
 
   const show = () => {
@@ -15,7 +13,7 @@ export function createNewsAdPopup(
     // 这样添加 show 类名时，必定会触发 1.5 秒的滑入动画，绝不会闪现
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        visibleState.set(true);
+        container.classList.add("show");
       });
     });
 
@@ -29,25 +27,39 @@ export function createNewsAdPopup(
   };
 
   const hide = () => {
-    visibleState.set(false);
+    if (autoCloseTimer) {
+      clearTimeout(autoCloseTimer);
+      autoCloseTimer = null;
+    }
+    container.classList.remove("show");
   };
 
-  const container = (
-    <div
-      className={() =>
-        `news-ad-popup ${visibleState.get() ? "show" : ""}`
-      }
-    >
-      <button className="close-btn" onClick={hide}>
-        ×
-      </button>
+  const container = document.createElement("div");
+  container.className = "news-ad-popup";
 
-      <a href={linkUrl} target="_blank" rel="noreferrer" className="ad-content">
-        <img src={imgSrc} alt="ad banner" />
-        <p>{() => text}</p>
-      </a>
-    </div>
-  ) as HTMLElement;
+  const closeButton = document.createElement("button");
+  closeButton.className = "close-btn";
+  closeButton.type = "button";
+  closeButton.textContent = "×";
+  closeButton.addEventListener("click", hide);
+
+  const link = document.createElement("a");
+  link.href = linkUrl;
+  link.target = "_blank";
+  link.rel = "noreferrer";
+  link.className = "ad-content";
+
+  const image = document.createElement("img");
+  image.src = imgSrc;
+  image.alt = "ad banner";
+  image.width = 320;
+  image.height = 160;
+
+  const title = document.createElement("p");
+  title.textContent = text;
+
+  link.append(image, title);
+  container.append(closeButton, link);
 
   return {
     element: container,

@@ -58,7 +58,7 @@ const pageBase = createPage(async () => {
 const popups = [
     {
 
-        imgSrc: `${baseUrl}refer/01cab261dde6beef5ec58144b02be53019f3d433.jpg@256w_144h_1c.avif`,
+        imgSrc: `${baseUrl}refer/01cab261dde6beef5ec58144b02be53019f3d433.jpg@256w_144h_1c.webp`,
         text: 'blender建模杯子教程',
         link: 'https://www.bilibili.com/video/BV1edRMBJEBT/',
         delay: 2000,      // 2秒后显示
