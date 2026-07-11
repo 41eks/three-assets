@@ -32,6 +32,7 @@ function navigate(hash: string) {
 
   }
   currentRoute = next;
+  window.dispatchEvent(new Event("routechange"));
   // 清理旧弹窗逻辑
   if (popupTimer) clearTimeout(popupTimer);
   if (currentPopup) {

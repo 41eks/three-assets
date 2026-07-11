@@ -56,7 +56,8 @@ function leave() {
     dispose = undefined;
 }
 export default {
-    enter, leave
+    enter, leave,
+    options: { hdr: false }
 }
 import * as THREE from 'three';
 

@@ -7,10 +7,13 @@ import * as THREE from 'three';  // ← 加这行
 import { assetsCache } from '../core/router.ts';
 import { createPage } from '../core/createPage.js';
 import { addTask } from '../core/scene.js';
+import { createInput } from '../component/input.tsx';
 
 const glbfile = '螺旋桨.glb'
 
 const baseUrl = import.meta.env.VITE_BASE_URL;
+const speedInput = createInput('螺旋桨转速', 0.35);
+document.body.appendChild(speedInput.element);
 
 
 // 1. 只处理 3D 逻辑
@@ -33,16 +36,18 @@ const pageBase = createPage(async () => {
 
 const task = (time: { dt: number }) => {
     if (!airscrewRoot) return;
-    airscrewRoot.rotation.z += time.dt * 0.35;
+    airscrewRoot.rotation.z += time.dt * speedInput.getValue();
 };
 
 function enter() {
     pageBase.enter();
+    speedInput.show();
     if (!dispose) dispose = addTask(task);
 }
 
 function leave() {
     pageBase.leave();
+    speedInput.hide();
     dispose?.();
     dispose = undefined;
 }

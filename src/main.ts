@@ -14,6 +14,7 @@ import { routeMap } from './core/router';
 routeMap.set('#/', {
     enter: homePage.enter,
     leave: homePage.leave,
+    options: { hdr: false },
 });
 // 2. 判断当前 hash 是不是 home
 const currentHash = location.hash || '#/';

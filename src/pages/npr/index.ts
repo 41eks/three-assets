@@ -6,6 +6,7 @@ import * as THREE from 'three';  // ← 加这行
 
 import { createCoordinateInput } from '../../component/CoordinateInput.js';
 import { createHDRSwitch } from '../../component/Switch.js';
+import { createColorInput } from '../../component/ColorInput.js';
 import { createPage } from '../../core/createPage.js';
 // import { scene, camera } from '../core/scene.js';
 import vertexShader from './vert.glsl'
@@ -15,9 +16,14 @@ import fragmentShader from './frag.glsl'
 const glbfile = 'nprv2.glb';
 // 1. 创建面板实例
 const coordPanel = createCoordinateInput("光照方向");
+const colorPanel = createColorInput("NPR 颜色", {
+  dark: "#0000ff",
+  light: "#00ff99",
+});
 // const hdrSwitch = createHDRSwitch();
 // 2. 挂载到页面
 document.body.appendChild(coordPanel.element);
+document.body.appendChild(colorPanel.element);
 // document.body.appendChild(
 //   hdrSwitch.element
 // );
@@ -45,6 +51,12 @@ createEffect(() => {
   // 所以这个 Effect 会被自动记录为 coordState 的订阅者
   const { x, y, z } = coordPanel.getXYZ();
   celMaterial.uniforms.uLightDir.value.set(x, y, z).normalize();
+});
+
+createEffect(() => {
+  const { dark, light } = colorPanel.getColors();
+  celMaterial.uniforms.uColorA.value.set(dark);
+  celMaterial.uniforms.uColorB.value.set(light);
 });
 
 
@@ -88,10 +100,12 @@ export default {
   ...pagebase, assets: [glbfile],
   enter: () => {
     coordPanel.show();
+    colorPanel.show();
     pagebase.enter()
   },
   leave: () => {
     coordPanel.hide();
+    colorPanel.hide();
     pagebase.leave();
   }
 }

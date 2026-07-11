@@ -22,7 +22,8 @@ export const routeConfig = [
     { hash: '#/wave', label: { home: 'wave', shader: 'wave' }, page: () => import('./pages/wave/index.ts') },
     { hash: '#/ikeye', label: { home: 'ikeye', '2d': 'ikeye' }, page: () => import('./pages/ikeye/index.ts') },
     { hash: '#/icecream', label: { home: '冰淇淋', '3d': '冰淇淋' }, page: () => import('./pages/icecream.ts') },
-    { hash: '#/airscrew', label: { home: '螺旋桨', '3d': '螺旋桨' }, page: () => import('./pages/airscrew.ts') },
+    { hash: '#/airscrew', label: {  '3d': '螺旋桨' }, page: () => import('./pages/airscrew.ts') },
+    { hash: '#/cup', label: { '3d': '杯子' }, page: () => import('./pages/cup.ts') },
 ];
 import { routeMap } from './core/router.ts';
 

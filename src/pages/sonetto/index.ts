@@ -144,7 +144,8 @@ function leave() {
 }
 export default {
     enter, leave,
-    assets: [VIDEO_URL]
+    assets: [VIDEO_URL],
+    options: { hdr: false }
 }
 
 
