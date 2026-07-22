@@ -1,4 +1,4 @@
-.news-ad-popup {
+.resource-popup {
 position: fixed;
 bottom: 20px;
 right: 20px; // 直接固定在最终位置
@@ -39,7 +39,7 @@ transition: transform 1.5s ease-out;
   }
 }
 
-.ad-content {
+.resource-link {
   display: flex;
   flex-direction: column;
   text-decoration: none;

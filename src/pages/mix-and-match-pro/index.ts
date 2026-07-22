@@ -12,7 +12,7 @@ const baseUrl = import.meta.env.VITE_BASE_URL;
 
 
 const SPINE_BASE_URL = `${baseUrl}spine-assets/`;
-const SKEL_FILE = "mix-and-match-pro.skel";
+const SKEL_FILE = "mix-and-match-pro.json";
 const ATLAS_FILE = "mix-and-match-pro.atlas";
 const DEFAULT_SKIN = "full-skins/girl";
 const DEFAULT_ANIM = "walk";
@@ -38,7 +38,7 @@ const assetManager = new spine.threejs.AssetManager(SPINE_BASE_URL);
 const parseAssets = () => {
     const atlas = assetManager.get(ATLAS_FILE);
     const atlasLoader = new spine.AtlasAttachmentLoader(atlas);
-    const binary = new spine.SkeletonBinary(atlasLoader);
+    const binary = new spine.SkeletonJson(atlasLoader);
     binary.scale = 0.01;
 
     const skeletonData = binary.readSkeletonData(assetManager.get(SKEL_FILE));

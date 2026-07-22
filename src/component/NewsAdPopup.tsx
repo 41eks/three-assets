@@ -35,7 +35,7 @@ export function createNewsAdPopup(
   };
 
   const container = document.createElement("div");
-  container.className = "news-ad-popup";
+  container.className = "resource-popup";
 
   const closeButton = document.createElement("button");
   closeButton.className = "close-btn";
@@ -47,11 +47,11 @@ export function createNewsAdPopup(
   link.href = linkUrl;
   link.target = "_blank";
   link.rel = "noreferrer";
-  link.className = "ad-content";
+  link.className = "resource-link";
 
   const image = document.createElement("img");
   image.src = imgSrc;
-  image.alt = "ad banner";
+  image.alt = text;
   image.width = 320;
   image.height = 160;
 

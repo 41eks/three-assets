@@ -23,7 +23,13 @@ export function createWait(
 
         cachedPromise = preloadPng
             .then(() => {
-                assetManager.loadBinary(skel);
+                // assetManager.loadBinary(skel);
+                // 👇 核心修改在这里：判断文件后缀，决定加载方式
+                if (skel.endsWith('.json')) {
+                    assetManager.loadText(skel);
+                } else {
+                    assetManager.loadBinary(skel);
+                }
                 assetManager.loadTextureAtlas(atlas);
 
                 // 延迟 200ms 再轮询，等 loadTextureAtlas 内部 downloadText 回调触发

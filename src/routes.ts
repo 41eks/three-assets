@@ -20,10 +20,12 @@ export const routeConfig = [
     { hash: '#/mix-and-match-pro', label: { home: 'mix-and-match', '2d': 'mix-and-match' }, page: () => import('./pages/mix-and-match-pro/index.ts') },
     { hash: '#/dissolve', label: { home: 'dissolve', shader: 'dissolve' }, page: () => import('./pages/dissolve/index.ts') },
     { hash: '#/wave', label: { home: 'wave', shader: 'wave' }, page: () => import('./pages/wave/index.ts') },
-    { hash: '#/ikeye', label: { home: 'ikeye', '2d': 'ikeye' }, page: () => import('./pages/ikeye/index.ts') },
+    { hash: '#/ikeye', label: {  '2d': '眼睛' }, page: () => import('./pages/ikeye/index.ts') },
     { hash: '#/icecream', label: { home: '冰淇淋', '3d': '冰淇淋' }, page: () => import('./pages/icecream.ts') },
-    { hash: '#/airscrew', label: {  '3d': '螺旋桨' }, page: () => import('./pages/airscrew.ts') },
+    { hash: '#/airscrew', label: { '3d': '螺旋桨' }, page: () => import('./pages/airscrew.ts') },
     { hash: '#/cup', label: { '3d': '杯子' }, page: () => import('./pages/cup.ts') },
+    { hash: '#/basket', label: { '3d': '竹篮' }, page: () => import('./pages/basket.ts') },
+    { hash: '#/idle', label: {  '2d': 'idle' }, page: () => import('./pages/idle/index.ts') }
 ];
 import { routeMap } from './core/router.ts';
 

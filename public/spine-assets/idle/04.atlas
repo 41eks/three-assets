@@ -1,0 +1,153 @@
+
+04.png
+size: 1024,256
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+下身
+  rotate: false
+  xy: 640, 123
+  size: 156, 130
+  orig: 165, 135
+  offset: 9, 5
+  index: -1
+右刘海
+  rotate: false
+  xy: 796, 92
+  size: 127, 161
+  orig: 127, 161
+  offset: 0, 0
+  index: -1
+右手
+  rotate: false
+  xy: 464, 15
+  size: 115, 75
+  orig: 115, 75
+  offset: 0, 0
+  index: -1
+右眉
+  rotate: false
+  xy: 462, 7
+  size: 50, 8
+  orig: 50, 8
+  offset: 0, 0
+  index: -1
+右眼 2
+  rotate: false
+  xy: 369, 4
+  size: 52, 23
+  orig: 52, 23
+  offset: 0, 0
+  index: -1
+右眼 3
+  rotate: false
+  xy: 268, 3
+  size: 52, 10
+  orig: 52, 10
+  offset: 0, 0
+  index: -1
+右眼1
+  rotate: false
+  xy: 789, 61
+  size: 52, 31
+  orig: 52, 32
+  offset: 0, 1
+  index: -1
+右耳朵
+  rotate: true
+  xy: 579, 24
+  size: 66, 61
+  orig: 70, 62
+  offset: 0, 1
+  index: -1
+右腮红
+  rotate: false
+  xy: 579, 0
+  size: 38, 24
+  orig: 38, 24
+  offset: 0, 0
+  index: -1
+后发
+  rotate: false
+  xy: 0, 4
+  size: 268, 249
+  orig: 278, 249
+  offset: 6, 0
+  index: -1
+嘴巴
+  rotate: true
+  xy: 617, 10
+  size: 14, 10
+  orig: 14, 10
+  offset: 0, 0
+  index: -1
+左刘海
+  rotate: true
+  xy: 464, 90
+  size: 163, 176
+  orig: 169, 177
+  offset: 6, 1
+  index: -1
+左手
+  rotate: false
+  xy: 268, 13
+  size: 101, 72
+  orig: 105, 88
+  offset: 4, 16
+  index: -1
+左眉
+  rotate: false
+  xy: 512, 7
+  size: 50, 8
+  orig: 50, 8
+  offset: 0, 0
+  index: -1
+左眼1
+  rotate: true
+  xy: 430, 34
+  size: 51, 32
+  orig: 52, 32
+  offset: 0, 0
+  index: -1
+左眼2
+  rotate: false
+  xy: 841, 69
+  size: 51, 23
+  orig: 52, 23
+  offset: 0, 0
+  index: -1
+左眼3
+  rotate: true
+  xy: 778, 72
+  size: 51, 11
+  orig: 52, 11
+  offset: 0, 0
+  index: -1
+左耳朵
+  rotate: true
+  xy: 369, 27
+  size: 58, 61
+  orig: 64, 61
+  offset: 5, 0
+  index: -1
+左腮红
+  rotate: false
+  xy: 421, 4
+  size: 41, 23
+  orig: 41, 23
+  offset: 0, 0
+  index: -1
+脸
+  rotate: false
+  xy: 268, 85
+  size: 196, 168
+  orig: 196, 168
+  offset: 0, 0
+  index: -1
+躯干
+  rotate: false
+  xy: 640, 6
+  size: 138, 117
+  orig: 138, 117
+  offset: 0, 0
+  index: -1
