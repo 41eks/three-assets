@@ -15,7 +15,7 @@ bgTexture.colorSpace = THREE.SRGBColorSpace;
 
 
 // 定义资源路径
-const VIDEO_URL = "https://files.rainbowgem.dpdns.org/public/vid/1999/sonnet.webm";
+const VIDEO_URL = "https://doc.rainbowgem.dpdns.org/public/vid/1999/sonnet.webm";
 
 // 2. 动态创建视频元素并创建纹理
 const video = document.createElement('video');
