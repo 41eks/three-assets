@@ -25,7 +25,9 @@ export const routeConfig = [
     { hash: '#/airscrew', label: { '3d': '螺旋桨' }, page: () => import('./pages/airscrew.ts') },
     { hash: '#/cup', label: { '3d': '杯子' }, page: () => import('./pages/cup.ts') },
     { hash: '#/basket', label: { '3d': '竹篮' }, page: () => import('./pages/basket.ts') },
-    { hash: '#/idle', label: {  '2d': 'idle' }, page: () => import('./pages/idle/index.ts') }
+    { hash: '#/pumpkin', label: { '3d': '南瓜' }, page: () => import('./pages/pumpkin.ts') },
+    { hash: '#/idle', label: {  '2d': 'idle' }, page: () => import('./pages/idle/index.ts') },
+    { hash: '#/blink', label: { 'home':'blink' ,'2d': 'blink' }, page: () => import('./pages/blink.ts') }
 ];
 import { routeMap } from './core/router.ts';
 
