@@ -26,6 +26,7 @@ export const routeConfig = [
     { hash: '#/cup', label: { '3d': '杯子' }, page: () => import('./pages/cup.ts') },
     { hash: '#/basket', label: { '3d': '竹篮' }, page: () => import('./pages/basket.ts') },
     { hash: '#/pumpkin', label: { '3d': '南瓜' }, page: () => import('./pages/pumpkin.ts') },
+    { hash: '#/perl', label: { '3d': '珍珠' }, page: () => import('./pages/perl.ts') },
     { hash: '#/idle', label: {  '2d': 'idle' }, page: () => import('./pages/idle/index.ts') },
     { hash: '#/blink', label: { 'home':'blink' ,'2d': 'blink' }, page: () => import('./pages/blink.ts') }
 ];
