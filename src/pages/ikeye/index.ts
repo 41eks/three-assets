@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import spine from '../../libs/spine-threejs.js';
+import spine from '@verdammt/spine3dot8-runtimes';
 import { hdrEnabled } from '../../core/scene.js';
 import { scene } from '../../store/webgl.ts';
 import { addTask } from '../../core/scene.js';

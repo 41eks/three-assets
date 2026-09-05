@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@verdammt/spine3dot8-runtimes':
+        specifier: 1.0.1
+        version: 1.0.1(three@0.184.0)
       three:
         specifier: ^0.184.0
         version: 0.184.0
@@ -257,6 +260,11 @@ packages:
 
   '@types/webxr@0.5.24':
     resolution: {integrity: sha512-h8fgEd/DpoS9CBrjEQXR+dIDraopAEfu4wYVNY2tEPwk60stPWhvZMf4Foo5FakuQ7HFZoa8WceaWFervK2Ovg==}
+
+  '@verdammt/spine3dot8-runtimes@1.0.1':
+    resolution: {integrity: sha512-s6V6Qa5xe1zLgQUOUBo4CPTGcVCC7UuSRhs4alUHuPUoygnaiIW5/x2QwSU2CWWqCKjuxDqWsfao70NFeXty4g==}
+    peerDependencies:
+      three: '>=0.110.0 <1'
 
   chokidar@5.0.0:
     resolution: {integrity: sha512-TQMmc3w+5AxjpL8iIiwebF73dRDF4fBIieAqGn9RGCWaEVwQ6Fb2cGe31Yns0RRIzii5goJ1Y7xbMwo1TxMplw==}
@@ -646,6 +654,10 @@ snapshots:
       meshoptimizer: 1.1.1
 
   '@types/webxr@0.5.24': {}
+
+  '@verdammt/spine3dot8-runtimes@1.0.1(three@0.184.0)':
+    dependencies:
+      three: 0.184.0
 
   chokidar@5.0.0:
     dependencies:

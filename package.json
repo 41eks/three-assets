@@ -17,6 +17,7 @@
     "vite-plugin-glsl": "^1.6.0"
   },
   "dependencies": {
+    "@verdammt/spine3dot8-runtimes": "1.0.1",
     "three": "^0.184.0"
   }
 }

@@ -3,3 +3,6 @@ packages:
 
 allowBuilds:
   '@parcel/watcher': false
+
+minimumReleaseAgeExclude:
+  - '@verdammt/spine3dot8-runtimes@1.0.0 || 1.0.1'
